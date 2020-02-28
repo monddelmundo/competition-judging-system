@@ -17,8 +17,14 @@ const scoresheetSchema = new Schema({
     overallMusical: { type: Number, required: true },
     overallLiterary: { type: Number, required: true },
     overallTotal: { type: Number, required: true },
-    musical: [musicalSchema],
-    literary: [literarySchema]
+    musical: { type: [{
+        name: { type: String, trim: true },
+        crierias: [Number]
+    }]},
+    literary: { type: [{
+        name: { type: String, trim: true },
+        crierias: [Number]
+    }]},
 });
 
 const Scoresheet = mongoose.model('Scoresheet', scoresheetSchema);
