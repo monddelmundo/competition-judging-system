@@ -8,6 +8,18 @@ router.route('/').get((req, res) => {
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/:id').get((req, res) => {
+  User.findById(req.params.id) 
+    .then(users => res.json(users))
+    .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/:id').delete((req, res) => {
+  User.findByIdAndDelete(req.params.id) 
+    .then(users => res.json("User has been deleted!!!"))
+    .catch(err => res.status(400).json('Error: ' + err));
+});
+
 router.route('/add').post((req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -18,6 +30,21 @@ router.route('/add').post((req, res) => {
   newUser.save() //saves new user to DB
     .then(() => res.json('User added!'))
     .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/update/:id').post((req, res) => {
+  User.findById(req.params.id)
+    .then(user => {
+      user.username = req.body.username;
+      user.password = req.body.password;
+      user.role = req.body.role;
+
+      user.save()
+        .then(() => res.json("User updated!!"))
+        .catch(err => res.status(400).json('Error: ' + err));
+
+  })
+      .catch(err => res.status(400).json('Error: ' + err));
 });
 
 module.exports = router;
