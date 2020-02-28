@@ -27,10 +27,6 @@ router.route('/add').post((req, res) => {
   const participants = req.body.participants;
   const status = req.body.status;
   const accessCode = req.body.accessCode;
-  const competitions = req.body.competitions;
-  const judges = req.body.judges;
-  const churches = req.body.churches;
-  const scoresheets = req.body.scoresheets;
 
   const newEvent = new Event({
     title, 
@@ -39,11 +35,7 @@ router.route('/add').post((req, res) => {
     location, 
     participants, 
     status, 
-    accessCode,
-    competitions,
-    judges,
-    churches,
-    scoresheets
+    accessCode
   });
 
   newEvent.save() //saves new user to DB
@@ -61,10 +53,6 @@ router.route('/update/:id').post((req, res) => {
       event.participants = req.body.participants;
       event.status = req.body.status;
       event.accessCode = req.body.accessCode;
-      event.competitions = req.body.competitions;
-      event.judges = req.body.judges;
-      event.churches = req.body.churches;
-      event.scoresheets = req.body.scoresheets;
 
       event.save()
         .then(() => res.json('Event updated!'))
