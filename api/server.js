@@ -22,15 +22,11 @@ connection.once('open', () => {
 
 const usersRouter = require('./routes/users');
 const eventRouter = require('./routes/events');
-const musicalRouter = require('./routes/musical');
-const literaryRouter = require('./routes/literary');
 const competitionRouter = require('./routes/competitions');
 const judgeRouter = require('./routes/judges');
 
 app.use('/users', usersRouter);
 app.use('/events', eventRouter);
-app.use('/musical', musicalRouter);
-app.use('/literary', literaryRouter);
 app.use('/competitions', competitionRouter);
 app.use('/judges', judgeRouter);
 
