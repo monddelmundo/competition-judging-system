@@ -5,21 +5,27 @@ const Schema = mongoose.Schema;
 const scoresheetSchema = new Schema({
     church_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Church'
+        ref: 'churches'
     },
     judge_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Judge'
+        ref: 'judges'
     },
     overallMusical: { type: Number, required: true },
     overallLiterary: { type: Number, required: true },
     overallTotal: { type: Number, required: true },
     musical: { type: [{
-        name: { type: String, trim: true },
+        competition_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'competitions'
+        },
         criterias: [Number]
     }]},
     literary: { type: [{
-        name: { type: String, trim: true },
+        competition_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'competitions'
+        },
         criterias: [Number]
     }]},
 });

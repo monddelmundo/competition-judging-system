@@ -8,7 +8,7 @@ const churchSchema = new Schema({
         ref: 'events'
     },
     name: { type: String, required: true, trim: true },
-    churchNumber: { type: Number, required: true },
+    churchNumber: { type: Number },
     participants: { type: [{
         competition_id: {
             type: mongoose.Schema.Types.ObjectId,
@@ -17,8 +17,8 @@ const churchSchema = new Schema({
         persons: { type: [{
             name: { type: String, trim: true},
             age: { type: Number },
-            dateSaved: { type: Date},
-            dateBaptized: { type: Date}
+            dateSaved: { type: String},
+            dateBaptized: { type: String}
         }]}
     }]}
 });

@@ -22,18 +22,33 @@ router.route('/:id').delete((req, res) => {
 router.route('/add').post((req, res) => {
     const event_id = req.body.event_id;
     const name = req.body.name;
-    const number = req.body.number;
+    const churchNumber = req.body.churchNumber;
+    const participants = req.body.participants;
 
     const newChurch = new Church ({
         event_id,
         name,
-        number
-        //todo
-        //add participants
+        churchNumber,
+        participants
     });
 
     newChurch.save()
         .then(() => res.json("Church added!!!"))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/update/:id').post((req, res) => {
+    Church.findById(req.params.id)
+        .then(churches => {
+            churches.event_id = req.body.event_id;
+            churches.name = req.body.name;
+            churches.churchNumber = req.body.churchNumber;
+            churches.participants = req.body.participants
+
+            churches.save()
+                .then(() => res.json("Church updated!!"))
+                .catch(err => res.status(400).json('Error: ' + err));
+        })
         .catch(err => res.status(400).json('Error: ' + err));
 });
 

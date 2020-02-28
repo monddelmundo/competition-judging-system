@@ -24,11 +24,13 @@ const usersRouter = require('./routes/users');
 const eventRouter = require('./routes/events');
 const competitionRouter = require('./routes/competitions');
 const judgeRouter = require('./routes/judges');
+const churchRouter = require('./routes/churches');
 
 app.use('/users', usersRouter);
 app.use('/events', eventRouter);
 app.use('/competitions', competitionRouter);
 app.use('/judges', judgeRouter);
+app.use('/churches', churchRouter);
 
 app.listen(
     port, 
