@@ -1,10 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const { ApolloServer, gql } = require('apollo-server-express');
+//const { ApolloServer, gql } = require('apollo-server-express');
 //require('./indexTest');
 require('dotenv').config();
-
 
 const app = express();
 const port = process.env.PORT || 5000;
