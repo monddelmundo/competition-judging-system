@@ -6,9 +6,7 @@ const Event = props => (
     <tr>
       <td>{props.event.title}</td>
       <td>{props.event.category}</td>
-      <td>{props.event.dateOfEvent.substring(0,10)}</td>
       <td>{props.event.location}</td>
-      <td>{props.event.participants}</td>
       <td>{props.event.status}</td>
       <td>
         <Link to={"/edit/"+props.event._id}>edit</Link> | <a href="#" onClick={() => { props.deleteEvent(props.event._id) }}>delete</a>
@@ -49,7 +47,7 @@ export default function Events(props) {
       }
     
     return (
-        <div className="Events">
+        <div className="Events container">
             <div className="lander">
                 <br />
                 <h3>List of Events</h3>
@@ -58,9 +56,7 @@ export default function Events(props) {
                         <tr>
                             <th>Title</th>
                             <th>Category</th>
-                            <th>Date of Event</th>
                             <th>Location</th>
-                            <th>Participants</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
