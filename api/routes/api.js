@@ -2,11 +2,14 @@ const express = require('express');
 const withAuth = require('../middleware');
 let { User } = require('../models/user.model');
 const router = require('express').Router();
+const fs = require('fs');
 
 const app = express();
 
 const secret = process.env.SECRET;
 const jwt = require('jsonwebtoken');
+
+const privateKey = fs.readFileSync('./private.key', 'utf-8');
 
 router.route('/authenticate').post((req, res) => {
   const { username, password } = req.body;
@@ -36,9 +39,11 @@ router.route('/authenticate').post((req, res) => {
           });
         } else {
           // Issue token
-          const payload = { username };
-          const token = jwt.sign(payload, secret, {
-            expiresIn: '1h'
+          const role = user.role;
+          const payload = { username, role };
+          const token = jwt.sign(payload, privateKey, {
+            expiresIn: '1h',
+            algorithm: 'RS256'
           });
           res.cookie('token', token, { httpOnly: true })
             .send(token);
