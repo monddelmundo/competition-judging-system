@@ -3,6 +3,8 @@ import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import axios from "axios";
+import Auth from "../Auth";
+import Cookies from 'js-cookie';
 
 export default function Login(props) {
 
@@ -23,9 +25,11 @@ export default function Login(props) {
         
         setIsLoading(true); //to tell users that the page is loading.
       
-        axios.post('http://localhost:5000/api/authenticate', fields, { timeout: 5000 })
+        axios.post('api/authenticate', fields, { timeout: 5000 })
         .then(res => {
             if (res.status === 200) {
+                localStorage.setItem('cool-jwt', res.data);
+                props.userHasAuthenticated(true);
                 props.history.push('/');
             } else {
                 setIsLoading(false);

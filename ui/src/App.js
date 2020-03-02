@@ -6,7 +6,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Routes from "./Routes";
 import { LinkContainer } from "react-router-bootstrap";
-import withAuth from './withAuth';
+import Auth from "./Auth";
+import { Button } from "react-bootstrap";
 
 function App(props) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
@@ -18,6 +19,10 @@ function App(props) {
 
   async function onLoad() {
     try {
+
+      if(Auth.isUserAuthenticated()) {
+        userHasAuthenticated(true);
+      }
       
       //await Auth.currentSession(); //will throw error if nobody is logged in.
       //userHasAuthenticated(true); //authenticate the user
@@ -31,25 +36,36 @@ function App(props) {
     setIsAuthenticating(false);
   }
 
+  async function handleLogout() {
+    await Auth.deauthenticateUser();
+    userHasAuthenticated(false);
+    props.history.push("/login"); //will redirect the user to login page after logging out
+  }
+
   return (
     <div className="App container">
       <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
         <Link to="/" className="navbar-brand">ADJUDICATOR</Link>
         <div className="collpase navbar-collapse">
-        <ul className="navbar-nav mr-auto">
-          <li className="navbar-item">
-            <Link to="/events" className="nav-link">Events</Link>
-          </li>
-          <li className="navbar-item">
-            <Link to="/user" className="nav-link">Create User</Link>
-          </li>
-          <li className="navbar-item">
-            <Link to="/login" className="nav-link">Login</Link>
-          </li>
-        </ul>
+          {
+            isAuthenticated 
+            ? <ul className="navbar-nav mr-auto">
+                <li className="navbar-item">
+                  <Link to="/events" className="nav-link">Events</Link>
+                </li>
+                <li className="navbar-item">
+                  <Link onClick={handleLogout} className="nav-link">Logout</Link>
+                </li>
+              </ul>
+            : <ul className="navbar-nav mr-auto">
+              <li className="navbar-item">
+                <Link to="/login" className="nav-link">Login</Link>
+              </li>
+              </ul>
+            }          
         </div>
       </nav>
-      <Routes appProps={{ }} />
+      <Routes appProps={{ isAuthenticated, userHasAuthenticated }} />
     </div>
   );
 }

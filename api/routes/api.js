@@ -41,7 +41,7 @@ router.route('/authenticate').post((req, res) => {
             expiresIn: '1h'
           });
           res.cookie('token', token, { httpOnly: true })
-            .sendStatus(200);
+            .send(token);
         }
       });
     }

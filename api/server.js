@@ -10,10 +10,10 @@ require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 5000;
-
+const secret = process.env.SECRET;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cookieParser());
+app.use(cookieParser(secret));
 app.use(cors({
   credentials: true,
   origin: "http://localhost:3000"
@@ -27,7 +27,6 @@ const connection = mongoose.connection;
 connection.once('open', () => {
   console.log("MongoDB database connection established successfully");
 })
-
 
 const usersRouter = require('./routes/users');
 const eventRouter = require('./routes/events');

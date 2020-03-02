@@ -14,11 +14,12 @@ export default function withAuth(ComponentToProtect) {
 
     componentDidMount() {
       axios.defaults.withCredentials = true;
-      axios.get('http://localhost:5000/api/checkToken', { 
+      axios.get('api/checkToken', { 
         method: 'GET'
       })
         .then(res => {
           if (res.status === 200) {
+            
             this.setState({ loading: false });
           } else {
             const error = new Error(res.error);
