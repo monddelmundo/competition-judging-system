@@ -20,12 +20,10 @@ function App(props) {
   async function onLoad() {
     try {
 
-      if(Auth.isUserAuthenticated()) {
+      if(await Auth.isUserAuthenticated()) {
         userHasAuthenticated(true);
       }
       
-      //await Auth.currentSession(); //will throw error if nobody is logged in.
-      //userHasAuthenticated(true); //authenticate the user
     }
     catch(e) {
       if (e !== 'No current user') {
@@ -46,24 +44,29 @@ function App(props) {
     <div className="App container">
       <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
         <Link to="/" className="navbar-brand">ADJUDICATOR</Link>
-        <div className="collpase navbar-collapse">
+        
           {
             isAuthenticated 
-            ? <ul className="navbar-nav mr-auto">
+            ? <div className="collpase navbar-collapse">
+              <ul className="navbar-nav mr-auto">
                 <li className="navbar-item">
                   <Link to="/events" className="nav-link">Events</Link>
                 </li>
+              </ul>
+              <ul className="navbar-nav ml-auto">
                 <li className="navbar-item">
-                  <Link onClick={handleLogout} className="nav-link">Logout</Link>
+                  <Link to="" onClick={handleLogout} className="nav-link">Logout</Link>
                 </li>
               </ul>
-            : <ul className="navbar-nav mr-auto">
-              <li className="navbar-item">
-                <Link to="/login" className="nav-link">Login</Link>
-              </li>
-              </ul>
-            }          
-        </div>
+              </div>
+            : <div className="collpase navbar-collapse">
+                <ul className="navbar-nav ml-auto">
+                <li className="navbar-item">
+                  <Link to="/login" className="nav-link">Login</Link>
+                </li>
+                </ul>
+              </div>
+            }     
       </nav>
       <Routes appProps={{ isAuthenticated, userHasAuthenticated }} />
     </div>
