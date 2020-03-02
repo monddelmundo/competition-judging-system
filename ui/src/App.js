@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, withRouter } from "react-router-dom";
-//import { Nav, Navbar, NavItem } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-//import Navbar from "./components/NavBar";
 import "./App.css";
 import Routes from "./Routes";
-import { LinkContainer } from "react-router-bootstrap";
 import Auth from "./Auth";
-import { Button } from "react-bootstrap";
 
 function App(props) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
