@@ -1,6 +1,7 @@
-
+//const jwt = require('jsonwebtoken');
 const router = require('express').Router();
-let User = require('../models/user.model');
+let { User } = require('../models/user.model');
+//const secret = process.env.SECRET;
 
 router.route('/').get((req, res) => {
   User.find() //mongoose method that lists the list of users in mongoDB Atlas
@@ -46,5 +47,33 @@ router.route('/update/:id').post((req, res) => {
   })
       .catch(err => res.status(400).json('Error: ' + err));
 });
-
+/*
+router.route('/authenticate').post((req, res) => {
+  const { username, password } = req.body;
+  User.findOne({ username })
+    .then(user => {
+      user.isCorrectPassword(password, function(err, same) {
+        if (err) {
+          res.status(500)
+            .json({
+              error: 'Internal error please try again'
+          });
+        } else if (!same) {
+          res.status(401)
+            .json({
+              error: 'Incorrect username or password'
+          });
+        } else {
+          // Issue token
+          const payload = { username };
+          const token = jwt.sign(payload, secret, {
+            expiresIn: '1h'
+          });
+          res.cookie('token', token, { httpOnly: true })
+            .sendStatus(200);
+        }
+      });
+    })
+})
+*/
 module.exports = router;
