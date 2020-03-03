@@ -9,7 +9,7 @@ const Event = props => (
       <td>{props.event.location}</td>
       <td>{props.event.status}</td>
       <td>
-        <Link to={"/edit/"+props.event._id}>edit</Link> | <a href="#" onClick={() => { props.deleteEvent(props.event._id) }}>delete</a>
+        <Link to={"/events/"+props.event._id}>edit</Link> | <a href="#" onClick={() => { props.deleteEvent(props.event._id) }}>delete</a>
       </td>
     </tr>
   )
@@ -41,9 +41,9 @@ export default function Events(props) {
         
         //removes the deleted exercise from the state events' array
         //_id came from mongodb's object name
-        setEvents({
-          events: events.filter(el => el._id !== id)
-        })
+        //setEvents({
+        //  events: events.filter(el => el._id !== id)
+        //})
       }
     
     return (
