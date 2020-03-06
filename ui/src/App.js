@@ -8,7 +8,8 @@ import Auth from "./Auth";
 function App(props) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
-
+  const [decodedUser, setDecodedUser] = useState({});
+  
   useEffect(() => {
     onLoad();
   }, []);
@@ -64,7 +65,7 @@ function App(props) {
               </div>
             }     
       </nav>
-      <Routes appProps={{ isAuthenticated, userHasAuthenticated }} />
+      <Routes appProps={{ isAuthenticated, userHasAuthenticated, decodedUser, setDecodedUser }} />
     </div>
   );
 }

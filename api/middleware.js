@@ -1,12 +1,13 @@
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const { User } = require('./models/user.model');
+
 require('dotenv').config();
-//const secret = 'mysecretsshhh';
-const secret = process.env.SECRET;
 
 const publicKey = fs.readFileSync('./public.key', 'utf-8');
 
 const withAuth = function(req, res, next) {
+
   const token = 
       req.body.token ||
       req.query.token ||
@@ -17,17 +18,23 @@ const withAuth = function(req, res, next) {
     res.status(401).send('Unauthorized: No token provided');
   } else {
     jwt.verify(token, publicKey, {
-      maxAge: '1h',
+      maxAge: '24h',
       algorithms: 'RS256'
-    }, function(err, decoded) {
+    }, async function(err, decoded) {
       if (err) {
         res.status(401).send('Unauthorized: Invalid token');
       } else {
+        //const user  = await User.findOne({ 'username': decoded.username }); 
+                
+        //if(!user) throw new Error()
+        
         req.username = decoded.username;
         req.role = decoded.role;
         next();
       }
     });
+
+    
   }
 }
 

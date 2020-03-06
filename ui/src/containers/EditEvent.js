@@ -19,7 +19,7 @@ export default function EditEvent(props) {
     }, []);
 
     async function onLoad() {
-        axios.get('' + props.match.params.id)
+        axios.get('http://localhost:5000/events/' + props.match.params.id)
             .then(res => {
                 
                 setTitle(res.data.title);

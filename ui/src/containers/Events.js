@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from 'axios';
+import axios from "axios";
 import { Link } from "react-router-dom";
+//import { Outlined } from "@material-ui/icons/DeleteOutlined";
+import Auth from "../Auth";
 
 const Event = props => (
     <tr>
@@ -9,7 +11,7 @@ const Event = props => (
       <td>{props.event.location}</td>
       <td>{props.event.status}</td>
       <td>
-        <Link to={"/events/"+props.event._id}>edit</Link> | <a href="#" onClick={() => { props.deleteEvent(props.event._id) }}>delete</a>
+        <Link to={"/events/"+props.event._id}>Edit</Link> | <a href="#" onClick={() => { props.deleteEvent(props.event._id) }}>Delete</a>
       </td>
     </tr>
   )
@@ -23,7 +25,8 @@ export default function Events(props) {
     }, []);
 
     async function onLoad() {
-        axios.get('events/')
+        //console.log(props.decodedUser);
+        axios.get('http://localhost:5000/events/')
             .then(res => {
                 setEvents(res.data);
             })
@@ -36,7 +39,7 @@ export default function Events(props) {
     }
 
     function deleteEvent(id) {
-        axios.delete('events/'+id)
+        axios.delete('http://localhost:5000/events/'+id)
           .then(res => console.log(res.data));
         
         //removes the deleted exercise from the state events' array
