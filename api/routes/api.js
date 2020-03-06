@@ -42,7 +42,7 @@ router.route('/authenticate').post((req, res) => {
           const role = user.role;
           const payload = { username, role };
           const token = jwt.sign(payload, privateKey, {
-            expiresIn: '1h',
+            expiresIn: '5h',
             algorithm: 'RS256'
           });
           res.cookie('token', token, { httpOnly: true })

@@ -14,7 +14,7 @@ export default function Routes({ appProps }) {
             <AppliedRoute path="/" exact component={Home} appProps={appProps} />
             <AppliedRoute path="/login" exact component={Login} appProps={appProps} />
             <AppliedRoute path="/events" exact component={withAuth(Events)} appProps={appProps} />
-            <AppliedRoute path="/events/:id" exact component={EditEvent} appProps={appProps} />
+            <AppliedRoute path="/events/:id" exact component={withAuth(EditEvent)} appProps={appProps} />
             <Route component={NotFound} />
         </Switch>
     );

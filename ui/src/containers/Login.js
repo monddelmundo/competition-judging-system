@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
@@ -25,16 +25,22 @@ export default function Login(props) {
         
         setIsLoading(true); //to tell users that the page is loading.
       
-        axios.post('api/authenticate', fields, { timeout: 5000 })
+        axios.post('http://localhost:5000/api/authenticate', fields, { timeout: 5000 })
         .then(res => {
             if (res.status === 200) {
-                localStorage.setItem('cool-jwt', res.data);
-                props.userHasAuthenticated(true);
-                props.history.push('/');
+              Auth.authenticateUser(res.data);
+              const token = Auth.getToken();
+              const jwt = require('jsonwebtoken');
+              const decoded = jwt.decode(token);
+              
+              //localStorage.setItem('cool-jwt', res.data);
+              props.setDecodedUser(decoded);
+              props.userHasAuthenticated(true);
+              props.history.push({ pathname: '/events', state: decoded });
             } else {
-                setIsLoading(false);
-                const error = new Error(res.error);
-                throw error;
+              setIsLoading(false);
+              const error = new Error(res.error);
+              throw error;
             }
         })
         .catch(err => {
