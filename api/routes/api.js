@@ -12,7 +12,7 @@ const jwt = require('jsonwebtoken');
 const privateKey = fs.readFileSync('./private.key', 'utf-8');
 
 router.route('/authenticate').post((req, res) => {
-  const { username, password } = req.body;
+  const { username, password, ipAddress, browser } = req.body;
   User.findOne({ username }, function(err, user) {
     if (err) {
       console.error(err);
@@ -40,7 +40,7 @@ router.route('/authenticate').post((req, res) => {
         } else {
           // Issue token
           const role = user.role;
-          const payload = { username, role };
+          const payload = { username, role, ipAddress, browser };
           const token = jwt.sign(payload, privateKey, {
             expiresIn: '5h',
             algorithm: 'RS256'

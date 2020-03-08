@@ -8,6 +8,8 @@ export default function withAuth(ComponentToProtect) {
     constructor() {
       super();
       this.state = {
+        browser: '',
+        ipAddress: '',
         loading: true,
         redirect: false,
         status: 0
@@ -21,7 +23,27 @@ export default function withAuth(ComponentToProtect) {
       })
         .then(res => {
           if (res.status === 200) {
-            this.setState({ loading: false, status: 200 });
+            const publicIp = require('public-ip');
+            const { detect } = require('detect-browser');
+            const browser = detect();
+            
+            // handle the case where we don't detect the browser
+            if (browser) {
+              this.state.browser = browser.name;
+            }
+            //this async method will check if the token has the same ip address
+            //and browser with the current ip address and browser that is being
+            //used by the user
+            (async() => {
+              this.state.ipAddress = await publicIp.v4();
+
+              if ((this.props.decodedUser.ipAddress === this.state.ipAddress) && (this.props.decodedUser.browser === this.state.browser)) {
+                this.setState({ loading: false, status: 200 });
+              } else {
+                this.setState({ loading: false, redirect: true, status: 401 });
+              }
+              
+            })();
           } else {
             const error = new Error(res.error);
             throw error;
@@ -44,7 +66,7 @@ export default function withAuth(ComponentToProtect) {
         this.props.userHasAuthenticated(false);
         return <Redirect to="/login" />
       }
-      
+      //console.log(this.props.decodedUser);
       return <ComponentToProtect {...this.props} />;
     }
   }
