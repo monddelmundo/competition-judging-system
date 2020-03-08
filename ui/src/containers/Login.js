@@ -4,17 +4,32 @@ import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import axios from "axios";
 import Auth from "../Auth";
-import Cookies from 'js-cookie';
 
 export default function Login(props) {
 
-    //const [username, setUsername] = useState('');
-    //const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [ipAddress, setIPAddress] = useState("");
+    const [currBrowser, setCurrBrowser] = useState("");
     const [fields, handleFieldChange] = useFormFields({
         username: "",
         password: ""
     });
+
+    useEffect(() => {
+      onLoad();
+    }, []);
+
+    async function onLoad() {
+      const publicIp = require('public-ip');
+      const { detect } = require('detect-browser');
+      const browser = detect();
+      
+      // handle the case where we don't detect the browser
+      if (browser) {
+        setCurrBrowser(browser.name);
+      }
+      setIPAddress(await publicIp.v4());
+    }
 
     function validateForm() {
         return fields.username.length > 0 && fields.password.length > 0;
@@ -24,8 +39,15 @@ export default function Login(props) {
         event.preventDefault();
         
         setIsLoading(true); //to tell users that the page is loading.
-      
-        axios.post('http://localhost:5000/api/authenticate', fields, { timeout: 5000 })
+
+        const newInfo = {
+          username: fields.username,
+          password: fields.password,
+          ipAddress: ipAddress,
+          browser: currBrowser
+        };
+        
+        axios.post('http://localhost:5000/api/authenticate', newInfo, { timeout: 5000 })
         .then(res => {
             if (res.status === 200) {
               Auth.authenticateUser(res.data);

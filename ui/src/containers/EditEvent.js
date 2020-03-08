@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useFormFields } from "../libs/hooksLib";
 import DatePicker from 'react-datepicker';
+import LoaderButton from "../components/LoaderButton";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function EditEvent(props) {
 
+    const [isLoading, setIsLoading] = useState(false);
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
     const [location, setLocation] = useState('');
@@ -35,6 +36,10 @@ export default function EditEvent(props) {
             })
     }
 
+    function validateForm() {
+        return title.length > 0 && category.length > 0 && location.length > 0 && participants.length > 0;
+    }
+
     function onChangeTitle(e) {
         setTitle(e.target.value);
     }
@@ -57,6 +62,7 @@ export default function EditEvent(props) {
 
     function onSubmit(e) {
         e.preventDefault();
+        setIsLoading(true);
         
         const updateEvent = {
             title: title,
@@ -69,9 +75,15 @@ export default function EditEvent(props) {
         }
 
         axios.post('http://localhost:5000/events/update/' + props.match.params.id, updateEvent)
-            .then(res => console.log(res.data));
-        
+            .then(res => console.log(res.data))
+            .catch(err => {
+                setIsLoading(false);
+                console.error(err);
+                alert('Error updating this event.');
+            });
+
         props.history.push('/events');
+        window.location.reload();
     }
 
     return (
@@ -89,12 +101,19 @@ export default function EditEvent(props) {
                 </div>
                 <div className="form-group"> 
                     <label>Category: </label>
-                    <input  type="text"
-                        required
+                    <select 
                         className="form-control"
-                        value={category}
-                        onChange={onChangeCategory}
-                        />
+                        value={category} 
+                        onChange={onChangeCategory}>
+                        <option 
+                            key="regional"
+                            value="regional">Regional
+                        </option>
+                        <option 
+                            key="national"
+                            value="national">National
+                        </option>
+                    </select>
                 </div>
                 <div className="form-group">
                     <label>Date of Event: </label>
@@ -129,8 +148,17 @@ export default function EditEvent(props) {
                         </option>
                     </select>
                 </div>
+                
                 <div className="form-group">
-                    <input type="submit" value="Edit Event" className="btn btn-primary" />
+                    <LoaderButton
+                        block
+                        type="submit"
+                        bsSize="large"
+                        isLoading={isLoading}
+                        disabled={!validateForm()}
+                    >
+                        Update
+                    </LoaderButton>
                 </div>
             </form>
         </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "./Events.css";
 import { Link } from "react-router-dom";
 //import { Outlined } from "@material-ui/icons/DeleteOutlined";
 import Auth from "../Auth";
@@ -52,6 +53,10 @@ export default function Events(props) {
     return (
         <div className="Events container">
             <div className="lander">
+                <div className="lander">
+                    <br/>
+                    <button className="btn btn-dark" onClick={() => props.history.push('/events/add')}>Create Event</button>
+                </div>
                 <br />
                 <h3>List of Events</h3>
                 <table className="table">

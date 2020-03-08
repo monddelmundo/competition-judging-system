@@ -1,6 +1,7 @@
 
 const router = require('express').Router();
 let { Event } = require('../models/event.model');
+const crypto = require('crypto');
 
 router.route('/').get((req, res) => {
     Event.find() //mongoose method that lists the list of events in mongoDB Atlas
@@ -16,17 +17,17 @@ router.route('/:id').get((req, res) => {
 
 router.route('/:id').delete((req, res) => {
   Event.findByIdAndDelete(req.params.id)
-    .then(() => res.json('Exercise ' + req.params.id + ' has been deleted!'))
+    .then(() => res.json('Event ' + req.params.id + ' has been deleted!'))
 });
 
 router.route('/add').post((req, res) => {
   const title = req.body.title;
   const category = req.body.category;
-  const dateOfEvent = Date(req.body.dateOfEvent);
+  const dateOfEvent = Date.parse(req.body.dateOfEvent);
   const location = req.body.location;
   const participants = req.body.participants;
   const status = req.body.status;
-  const accessCode = req.body.accessCode;
+  const accessCode = crypto.randomBytes(3).toString('hex').toUpperCase();
 
   const newEvent = new Event({
     title, 
