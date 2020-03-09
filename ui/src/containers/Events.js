@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Events.css";
 import { Link } from "react-router-dom";
-//import { Outlined } from "@material-ui/icons/DeleteOutlined";
-import Auth from "../Auth";
 
 const Event = props => (
     <tr>

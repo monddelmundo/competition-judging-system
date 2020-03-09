@@ -27,7 +27,6 @@ function App(props) {
         alert(e);
       }
     }
-  
     setIsAuthenticating(false);
   }
 
@@ -48,6 +47,9 @@ function App(props) {
               <ul className="navbar-nav mr-auto">
                 <li className="navbar-item">
                   <Link to="/events" className="nav-link">Events</Link>
+                </li>
+                <li className="navbar-item">
+                  <Link to="/competitions" className="nav-link">Competitions</Link>
                 </li>
               </ul>
               <ul className="navbar-nav ml-auto">

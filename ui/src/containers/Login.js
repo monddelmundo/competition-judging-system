@@ -20,6 +20,11 @@ export default function Login(props) {
     }, []);
 
     async function onLoad() {
+      
+      if(Auth.isUserAuthenticated()) {
+        props.history.push('/events');
+      }
+
       const publicIp = require('public-ip');
       const { detect } = require('detect-browser');
       const browser = detect();
