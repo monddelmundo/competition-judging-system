@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import LoaderButton from "../components/LoaderButton";
@@ -90,66 +91,54 @@ export default function EditEvent(props) {
         <div>
             <h3>Edit Event</h3>
             <form onSubmit={onSubmit}>
-                <div className="form-group"> 
-                    <label>Title: </label>
-                    <input type="text"
-                        required
-                        className="form-control"
+                <FormGroup controlId="title" bsSize="large">
+                    <ControlLabel>Title</ControlLabel>
+                    <FormControl
+                        autoFocus
+                        type="text"
                         value={title}
                         onChange={onChangeTitle}
-                        />
-                </div>
-                <div className="form-group"> 
-                    <label>Category: </label>
-                    <select 
-                        className="form-control"
-                        value={category} 
-                        onChange={onChangeCategory}>
-                        <option 
-                            key="regional"
-                            value="regional">Regional
-                        </option>
-                        <option 
-                            key="national"
-                            value="national">National
-                        </option>
-                    </select>
-                </div>
-                <div className="form-group">
-                    <label>Date of Event: </label>
+                    />
+                </FormGroup>
+                <FormGroup controlId="category" bsSize="large">
+                    <ControlLabel>Category</ControlLabel>
+                    <FormControl
+                        componentClass="select"
+                        value={category}
+                        onChange={onChangeCategory}
+                    >
+                        <option value="regional">Regional</option>
+                        <option value="national">National</option>
+                    </FormControl>
+                </FormGroup>
+                <FormGroup controlId="dateOfEvent" bsSize="large">
+                    <ControlLabel>Date of Event</ControlLabel>
                     <br />
                     <DatePicker
                         selected={dateOfEvent}
                         onChange={(newDate) => setDateOfEvent(newDate)}
                     />
-                </div>
-                <div className="form-group"> 
-                    <label>Location: </label>
-                    <input  type="text"
-                        required
-                        className="form-control"
+                </FormGroup>
+                <FormGroup controlId="location" bsSize="large">
+                    <ControlLabel>Location</ControlLabel>
+                    <FormControl
+                        type="text"
                         value={location}
                         onChange={onChangeLocation}
-                        />
-                </div>
-                <div className="form-group"> 
-                    <label>Participants: </label>
-                    <select 
-                        className="form-control"
-                        value={participants} 
-                        onChange={onChangeParticipants}>
-                        <option 
-                            key="youth"
-                            value="youth">Youth
-                        </option>
-                        <option 
-                            key="adult"
-                            value="adult">Adult
-                        </option>
-                    </select>
-                </div>
-                
-                <div className="form-group">
+                    />
+                </FormGroup>
+                <FormGroup controlId="participants" bsSize="large">
+                    <ControlLabel>Participants</ControlLabel>
+                    <FormControl
+                        componentClass="select"
+                        value={participants}
+                        onChange={onChangeParticipants}
+                    >
+                        <option value="youth">Youth</option>
+                        <option value="adult">Adult</option>
+                    </FormControl>
+                </FormGroup>
+                <FormGroup controlId="loaderBtn" bsSize="large">
                     <LoaderButton
                         block
                         type="submit"
@@ -159,7 +148,7 @@ export default function EditEvent(props) {
                     >
                         Update
                     </LoaderButton>
-                </div>
+                </FormGroup>
             </form>
         </div>
     );
