@@ -13,6 +13,12 @@ router.route('/:id').get((req, res) => {
       .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/event_id/:id').get((req, res) => {
+    Competition.find({ event_id: req.params.id })
+        .then(competitions => res.json(competitions))
+        .catch(err => res.status(400).json('Error: ' + err));
+})
+
 router.route('/:id').delete((req, res) => {
     Competition.findByIdAndDelete(req.params.id) 
       .then(competitions => res.json("Competition has been deleted!!!"))

@@ -56,7 +56,7 @@ export default function CreateEvent(props) {
                     <ControlLabel>Title</ControlLabel>
                     <FormControl
                         autoFocus
-                        type="title"
+                        type="text"
                         value={fields.title}
                         onChange={handleFieldChange}
                     />
@@ -64,9 +64,7 @@ export default function CreateEvent(props) {
                 <FormGroup controlId="category" bsSize="large">
                     <ControlLabel>Category</ControlLabel>
                     <FormControl
-                        autoFocus
                         componentClass="select"
-                        type="category"
                         placeholder="Category"
                         value={fields.category || "Regional"}
                         onChange={handleFieldChange}
@@ -86,8 +84,7 @@ export default function CreateEvent(props) {
                 <FormGroup controlId="location" bsSize="large">
                     <ControlLabel>Location</ControlLabel>
                     <FormControl
-                        autoFocus
-                        type="location"
+                        type="text"
                         value={fields.location}
                         onChange={handleFieldChange}
                     />
@@ -95,9 +92,7 @@ export default function CreateEvent(props) {
                 <FormGroup controlId="participants" bsSize="large">
                     <ControlLabel>Participants</ControlLabel>
                     <FormControl
-                        autoFocus
                         componentClass="select"
-                        type="participants"
                         placeholder="Participants"
                         value={fields.participants || "Adult"}
                         onChange={handleFieldChange}
