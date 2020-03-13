@@ -11,7 +11,7 @@ const competitionSchema = new Schema({
     type: { type: String, required: true, trim: true },
     minNoOfPerson: { type: Number, required: true },
     maxNoOfPerson: { type: Number, required: true },
-    critierias: { type: [{
+    criterias: { type: [{
         title: { type: String, required: true, trim: true },
         value: { type: Number, required: true }
     }]}
