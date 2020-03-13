@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Competitions.css";
 import { Link } from "react-router-dom";
-import { FormGroup, ControlLabel, FormControl } from "react-bootstrap";
+import { FormGroup, FormControl } from "react-bootstrap";
 
 const Competition = props => (
     <tr>
@@ -11,7 +11,7 @@ const Competition = props => (
         <td>{props.competition.minNoOfPerson}</td>
         <td>{props.competition.maxNoOfPerson}</td>
         <td>
-            <Link to={"/criterias/"+props.competition._id}>Criterias</Link> | <Link to={"/competitions/"+props.competition._id}>Edit</Link> | <a href="#" onClick={() => { props.deleteEvent(props.competition._id) }}>Delete</a>
+            <Link to={{ pathname: "/criterias", state: { competition: props.competition }}}>View Criterias</Link> | <Link to={"/competitions/"+props.competition._id}>Edit</Link> | <a href="#" onClick={() => { props.deleteEvent(props.competition._id) }}>Delete</a>
         </td>
     </tr>
   )
@@ -27,11 +27,24 @@ export default function Competitions(props) {
     }, []);
 
     async function onLoad() {
-        axios.get('http://localhost:5000/events')
+        let defaultID = '';
+
+        await axios.get('http://localhost:5000/events')
             .then(res => {
                 if(res.data.length > 0) {
                     setEvents(res.data);
                     setSelectedEvent(res.data[0]._id);
+                    defaultID = res.data[0]._id;
+                }
+            })
+
+        await axios.get('http://localhost:5000/competitions/event_id/' + defaultID)
+            .then(res => {
+                if(res.data.length > 0) {
+                    setCompetitions(res.data);
+                    toDisplay(true);
+                } else {
+                    toDisplay(false);
                 }
             })
     }
@@ -53,6 +66,15 @@ export default function Competitions(props) {
             })
     }
 
+    function displayAddButton() {
+        return (
+            <div>
+                <br/>
+                <button className="btn btn-dark" onClick={() => props.history.push('/competitions/add/' + selectedEvent)}>Add Competition</button>
+            </div>
+        );
+    }
+
     function deleteCompetition(id) {
         axios.delete('http://localhost:5000/competitions/'+id)
           .then(res => console.log(res.data));
@@ -67,11 +89,7 @@ export default function Competitions(props) {
     function displayCompetitions() {
         return (
             <div>
-                <div>
-                    <br/>
-                    <button className="btn btn-dark" onClick={() => props.history.push('/competitions/add')}>Add Competition</button>
-                </div>
-                <h3>List of Competitions for Selected Event</h3>
+                <h3>List of Competition(s) for Selected Event</h3>
                 <table className="table">
                     <thead className="thead-light">
                         <tr>
@@ -90,6 +108,7 @@ export default function Competitions(props) {
                         }
                     </tbody>
                 </table>
+                {displayAddButton()}
             </div>
         );
     }
@@ -117,8 +136,8 @@ export default function Competitions(props) {
                         <button className="btn btn-dark" onClick={handleViewBtn}>View</button>
                     </FormGroup>
                 </div>
-                { display ? displayCompetitions() : <div><h3>Nothing to display!</h3></div>}
             </div>
+            { display ? displayCompetitions() : <div><h3>Nothing to display!</h3>{displayAddButton()}</div>}
         </div>
     );
 }

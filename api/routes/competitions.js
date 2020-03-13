@@ -25,6 +25,40 @@ router.route('/:id').delete((req, res) => {
       .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/:id/criteria_id/:criteria_id').get((req, res) => {
+    Competition.findById(req.params.id)
+        .then(competition => {
+            competition.criterias.forEach(criteria => {
+                if(criteria._id == req.params.criteria_id) {
+                    res.json(criteria);
+                }
+            });
+        })
+        .catch(err => res.status(400).json('Error: ' + err));
+})
+
+/*
+criteria.value = 50;
+competition.save()
+    .then(() => res.json("Criteria updated!!!"))
+    .catch(err => res.status(400).json('Error: ' + err));
+*/
+
+router.route('/:id/criteria_id/:criteria_id').delete((req, res) => {
+    Competition.findById(req.params.id)
+        .then(competition => {
+            competition.criterias.forEach(criteria => {
+                if(criteria._id == req.params.criteria_id) {
+                    competition.criterias.pull(req.params.criteria_id);
+                    competition.save()
+                        .then(res.json("Criteria has been deleted!!!"))
+                        .catch(err => res.status(400).json('Error: ' + err));
+                }
+            });
+        })
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
 router.route('/add').post((req, res) => {
     const event_id = req.body.event_id;
     const name = req.body.name;

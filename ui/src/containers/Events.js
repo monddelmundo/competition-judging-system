@@ -46,17 +46,13 @@ export default function Events(props) {
         //setEvents({
         //  events: events.filter(el => el._id !== id)
         //})
-      }
+    }
     
     return (
         <div className="Events container">
             <div className="lander">
-                <div className="lander">
-                    <br/>
-                    <button className="btn btn-dark" onClick={() => props.history.push('/events/add')}>Create Event</button>
-                </div>
                 <br />
-                <h3>List of Events</h3>
+                <h3>List of Event(s)</h3>
                 <table className="table">
                     <thead className="thead-light">
                         <tr>
@@ -71,6 +67,10 @@ export default function Events(props) {
                         {eventList()}
                     </tbody>
                 </table>
+            </div>
+            <div className="lander">
+                <br/>
+                <button className="btn btn-dark" onClick={() => props.history.push('/events/add')}>Create Event</button>
             </div>
         </div>
     );
