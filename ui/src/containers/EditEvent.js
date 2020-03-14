@@ -49,10 +49,6 @@ export default function EditEvent(props) {
         setCategory(e.target.value);
     }
 
-    function onChangeDateOfEvent(e) {
-        setDateOfEvent(e.target.value);
-    }
-
     function onChangeLocation(e) {
         setLocation(e.target.value);
     }
