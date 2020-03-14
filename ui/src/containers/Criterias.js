@@ -8,7 +8,7 @@ const Criteria = props => (
         <td>{props.criteria.title}</td>
         <td>{props.criteria.value}</td>
         <td>
-            <Link to={"/criterias/"+props.criteria._id}>Edit</Link> | <Link to={{ pathname: "/criterias", state: { competition: props.competition }}} onClick={() => { props.deleteCriteria(props.criteria._id) }}>Delete</Link>
+            <Link to={{ pathname: "/criterias/"+props.criteria._id, state: { competition: props.competition }}}>Edit</Link> | <Link to={{ pathname: "/criterias", state: { competition: props.competition }}} onClick={() => { props.deleteCriteria(props.criteria._id) }}>Delete</Link>
         </td>
     </tr>
 )
