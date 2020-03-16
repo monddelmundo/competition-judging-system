@@ -21,6 +21,10 @@ export default function CreateEvent(props) {
         return fields.title.length > 0 && fields.location.length > 0;
     }
 
+    function handleCancel() {
+        props.history.push('/events')
+    }
+
     function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
@@ -113,6 +117,13 @@ export default function CreateEvent(props) {
                     </LoaderButton>
                 </FormGroup>
             </form>
+            <LoaderButton
+                block
+                bsSize="large"
+                onClick={handleCancel}
+            >
+                Cancel
+            </LoaderButton>
         </div>
     );
 

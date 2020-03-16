@@ -23,11 +23,10 @@ export default function Criterias(props) {
 
     function onLoad() {
         setCompetition(props.location.state.competition);
-        
     }
 
     function deleteCriteria(id) {
-        axios.delete('http://localhost:5000/competitions/' + competition._id + '/criteria_id/'+id)
+        axios.delete('http://localhost:5000/competitions/' + competition._id + '/delete/'+id)
             .then(res => console.log(res.data));
         
         props.location.state.competition.criterias = competition.criterias.filter(cl => cl._id !== id);

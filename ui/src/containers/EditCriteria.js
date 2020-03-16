@@ -18,13 +18,13 @@ export default function EditCriteria(props) {
     function onLoad() {
         setCompetition(props.location.state.competition);
         axios.get('http://localhost:5000/competitions/' + props.location.state.competition._id + '/criteria_id/' + props.match.params.id)
-        .then(res => {
-            setTitle(res.data.title);
-            setValue(parseInt(res.data.value));
-        })
-        .catch(function (error) {
-            console.log(error);
-        })
+            .then(res => {
+                setTitle(res.data.title);
+                setValue(parseInt(res.data.value));
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
         //console.log(fields.title);
     }
 
@@ -40,10 +40,38 @@ export default function EditCriteria(props) {
         setValue(e.target.value);
     }
 
+    function handleCancel() {
+        props.history.push({
+            pathname: '/criterias',
+            state: {
+                competition: competition
+            }
+        });
+    }
+
     function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
         //todo
+        const updateCriteria = {
+            title: title,
+            value: value
+        }
+
+        axios.post('http://localhost:5000/competitions/' + competition._id + '/update/' + props.match.params.id, updateCriteria)
+            .then(res => { 
+                props.history.push({
+                    pathname: '/criterias',
+                    state: {
+                        competition: res.data
+                    }
+                });
+            })
+            .catch(err => {
+                setIsLoading(false);
+                console.error(err);
+                alert('Error updating this criteria.');
+            });
     }
 
     return (
@@ -79,6 +107,14 @@ export default function EditCriteria(props) {
                     </LoaderButton>
                 </FormGroup>
             </form>
+            <LoaderButton
+                block
+                bsSize="large"
+                onClick={handleCancel}
+            >
+                Cancel
+            </LoaderButton>
+            
         </div>
     );
 }

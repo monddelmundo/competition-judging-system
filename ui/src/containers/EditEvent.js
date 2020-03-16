@@ -57,7 +57,11 @@ export default function EditEvent(props) {
         setParticipants(e.target.value);
     }
 
-    function onSubmit(e) {
+    function handleCancel() {
+        props.history.push('/events')
+    }
+
+    function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
         
@@ -86,7 +90,7 @@ export default function EditEvent(props) {
     return (
         <div>
             <h3>Edit Event</h3>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={handleSubmit}>
                 <FormGroup controlId="title" bsSize="large">
                     <ControlLabel>Title</ControlLabel>
                     <FormControl
@@ -146,6 +150,13 @@ export default function EditEvent(props) {
                     </LoaderButton>
                 </FormGroup>
             </form>
+            <LoaderButton
+                block
+                bsSize="large"
+                onClick={handleCancel}
+            >
+                Cancel
+            </LoaderButton>
         </div>
     );
 }
