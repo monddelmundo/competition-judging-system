@@ -70,7 +70,7 @@ export default function Competitions(props) {
         return (
             <div>
                 <br/>
-                <button className="btn btn-dark" onClick={() => props.history.push('/competitions/add/' + selectedEvent)}>Add Competition</button>
+                <button className="btn btn-dark" onClick={() => props.history.push('/competitions/add/' + selectedEvent)}>Create Competition</button>
             </div>
         );
     }
