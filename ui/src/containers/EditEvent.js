@@ -65,7 +65,7 @@ export default function EditEvent(props) {
         e.preventDefault();
         setIsLoading(true);
         
-        const updateEvent = {
+        const updatedEvent = {
             title: title,
             category: category,
             dateOfEvent: dateOfEvent,
@@ -75,7 +75,7 @@ export default function EditEvent(props) {
             accessCode: accessCode
         }
 
-        axios.post('http://localhost:5000/events/update/' + props.match.params.id, updateEvent)
+        axios.post('http://localhost:5000/events/update/' + props.match.params.id, updatedEvent)
             .then(res => console.log(res.data))
             .catch(err => {
                 setIsLoading(false);
@@ -88,7 +88,7 @@ export default function EditEvent(props) {
     }
 
     return (
-        <div>
+        <div className="edit-event container">
             <h3>Edit Event</h3>
             <form onSubmit={handleSubmit}>
                 <FormGroup controlId="title" bsSize="large">

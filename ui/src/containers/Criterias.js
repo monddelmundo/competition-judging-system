@@ -53,7 +53,7 @@ export default function Criterias(props) {
     }
 
     return (
-        <div className="Criterias container">
+        <div className="criterias container">
             <div className="lander">
                 <br />
                 <h3>List of Criteria(s)</h3>
@@ -81,7 +81,7 @@ export default function Criterias(props) {
             </div>
             <div className="lander">
                 <br/>
-                <button className="btn btn-dark" onClick={() => props.history.push('/criterias/add')}>Create Criterias</button>
+                <button className="btn btn-dark" onClick={() => props.history.push({ pathname: '/criterias/add', state: { competition: competition }})}>Create Criterias</button>
             </div>
         </div>
     );

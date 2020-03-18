@@ -114,7 +114,7 @@ export default function Competitions(props) {
     }
 
     return (
-        <div className="Competitions container">
+        <div className="competitions container">
             <div className="lander">
                 <div>
                     <FormGroup>

@@ -1,43 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-import axios from 'axios'
-import { useFormFields } from '../libs/hooksLib';
 import LoaderButton from '../components/LoaderButton';
+import { useFormFields } from '../libs/hooksLib';
+import axios from 'axios';
 
-export default function EditCriteria(props) {
+export default function CreateCriteria(props) {
 
     const [competition, setCompetition] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [title, setTitle] = useState('');
-    const [value, setValue] = useState(0);
+    const [fields, handleFieldChange] = useFormFields({
+        title: "",
+        value: 0
+    });
 
     useEffect(() => {
         onLoad();
-    }, []);
+    }, [])
 
     function onLoad() {
         setCompetition(props.location.state.competition);
-        axios.get('http://localhost:5000/competitions/' + props.location.state.competition._id + '/criteria_id/' + props.match.params.id)
-            .then(res => {
-                setTitle(res.data.title);
-                setValue(parseInt(res.data.value));
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-        //console.log(fields.title);
     }
 
     function validateForm() {
-        return title.length > 0 && value > 0;
+        return fields.title.length > 0 && fields.value > 0;
     }
 
-    function onChangeTitle(e) {
-        setTitle(e.target.value);
-    }
+    function handleSubmit(e) {
+        e.preventDefault();
+        setIsLoading(true);
 
-    function onChangeValue(e) {
-        setValue(e.target.value);
+        axios.post('http://localhost:5000/competitions/' + props.location.state.competition._id + '/add', fields)
+            .then(res => {
+                props.history.push({
+                    pathname: '/criterias',
+                    state: {
+                        competition: res.data
+                    }
+                });
+            })
+            .catch(err => {
+                setIsLoading(false);
+                console.error(err);
+                alert('Error adding this criteria.');
+            });
     }
 
     function handleCancel() {
@@ -49,50 +54,25 @@ export default function EditCriteria(props) {
         });
     }
 
-    function handleSubmit(e) {
-        e.preventDefault();
-        setIsLoading(true);
-        //todo
-        const updateCriteria = {
-            title: title,
-            value: value
-        }
-
-        axios.post('http://localhost:5000/competitions/' + competition._id + '/update/' + props.match.params.id, updateCriteria)
-            .then(res => { 
-                props.history.push({
-                    pathname: '/criterias',
-                    state: {
-                        competition: res.data
-                    }
-                });
-            })
-            .catch(err => {
-                setIsLoading(false);
-                console.error(err);
-                alert('Error updating this criteria.');
-            });
-    }
-
     return (
-        <div className="edit-criteria container">
-            <h3>Edit Criteria</h3>
+        <div className="create-criteria container">
+            <h3>Create Criteria</h3>
             <form onSubmit={handleSubmit}>
                 <FormGroup controlId="title" bsSize="large">
                     <ControlLabel>Title</ControlLabel>
                     <FormControl
                         autoFocus
                         type="text"
-                        value={title}
-                        onChange={onChangeTitle}
+                        value={fields.title}
+                        onChange={handleFieldChange}
                     />
                 </FormGroup>
                 <FormGroup controlId="value" bsSize="large">
                     <ControlLabel>Percentage (%)</ControlLabel>
                     <FormControl
                         type="text"
-                        value={value}
-                        onChange={onChangeValue}
+                        value={fields.value}
+                        onChange={handleFieldChange}
                     />
                 </FormGroup>
                 <FormGroup controlId="submit">
@@ -103,7 +83,7 @@ export default function EditCriteria(props) {
                         isLoading={isLoading}
                         disabled={!validateForm()}
                     >
-                        Update
+                        Create
                     </LoaderButton>
                 </FormGroup>
             </form>
@@ -114,7 +94,6 @@ export default function EditCriteria(props) {
             >
                 Cancel
             </LoaderButton>
-            
         </div>
     );
 }
