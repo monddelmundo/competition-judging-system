@@ -18,7 +18,7 @@ export default function CreateEvent(props) {
     const [isLoading, setIsLoading] = useState(false);
 
     function validateForm() {
-        return fields.title.length > 0 && fields.location.length > 0;
+        return fields.title.length > 0 && fields.category != "" && fields.participants != "" && fields.location.length > 0;
     }
 
     function handleCancel() {
@@ -53,7 +53,7 @@ export default function CreateEvent(props) {
     }
 
     return (
-        <div className="create-event">
+        <div className="create-event container">
             <h3>Create Event</h3>
             <form onSubmit={handleSubmit}>
                 <FormGroup controlId="title" bsSize="large">
@@ -61,6 +61,7 @@ export default function CreateEvent(props) {
                     <FormControl
                         autoFocus
                         type="text"
+                        placeholder="Enter Title"
                         value={fields.title}
                         onChange={handleFieldChange}
                     />
@@ -70,9 +71,10 @@ export default function CreateEvent(props) {
                     <FormControl
                         componentClass="select"
                         placeholder="Category"
-                        value={fields.category || "Regional"}
+                        value={fields.category}
                         onChange={handleFieldChange}
                     >
+                        <option value="">Select Category</option>
                         <option value="regional">Regional</option>
                         <option value="national">National</option>
                     </FormControl>
@@ -89,6 +91,7 @@ export default function CreateEvent(props) {
                     <ControlLabel>Location</ControlLabel>
                     <FormControl
                         type="text"
+                        placeholder="Enter Location"
                         value={fields.location}
                         onChange={handleFieldChange}
                     />
@@ -98,9 +101,10 @@ export default function CreateEvent(props) {
                     <FormControl
                         componentClass="select"
                         placeholder="Participants"
-                        value={fields.participants || "Adult"}
+                        value={fields.participants}
                         onChange={handleFieldChange}
                     >
+                        <option value="">Select Participants</option>
                         <option value="youth">Youth</option>
                         <option value="adult">Adult</option>
                     </FormControl>

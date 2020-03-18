@@ -17,6 +17,9 @@ export default function withAuth(ComponentToProtect) {
     }
 
     componentDidMount() {
+      if(!Auth.isUserAuthenticated())
+        this.setState({ loading: false, redirect: true, status: 401 });
+
       axios.defaults.withCredentials = true;
       axios.get('http://localhost:5000/api/checkToken', { 
         method: 'GET'

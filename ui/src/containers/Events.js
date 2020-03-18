@@ -49,7 +49,7 @@ export default function Events(props) {
     }
     
     return (
-        <div className="Events container">
+        <div className="events container">
             <div className="lander">
                 <br />
                 <h3>List of Event(s)</h3>
