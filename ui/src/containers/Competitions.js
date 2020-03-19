@@ -11,7 +11,7 @@ const Competition = props => (
         <td>{props.competition.minNoOfPerson}</td>
         <td>{props.competition.maxNoOfPerson}</td>
         <td>
-            <Link to={{ pathname: "/criterias", state: { competition: props.competition }}}>View Criterias</Link> | <Link to={"/competitions/"+props.competition._id}>Edit</Link> | <a href="#" onClick={() => { props.deleteEvent(props.competition._id) }}>Delete</a>
+            <Link to={{ pathname: "/criterias", state: { competition: props.competition }}}>View Criterias</Link> | <Link to={"/competitions/"+props.competition._id}>Edit</Link> | <a href="#" onClick={() => { props.deleteCompetition(props.competition._id) }}>Delete</a>
         </td>
     </tr>
   )
@@ -28,16 +28,17 @@ export default function Competitions(props) {
 
     async function onLoad() {
         let defaultID = '';
-
+        
         await axios.get('http://localhost:5000/events')
             .then(res => {
                 if(res.data.length > 0) {
-                    setEvents(res.data);
+                    //sorts title of events in reverse to get latest event
+                    setEvents(res.data.sort((a,b) => (a.title > b.title) ? -1 : ((b.title > a.title) ? 1 : 0)));
                     setSelectedEvent(res.data[0]._id);
                     defaultID = res.data[0]._id;
                 }
             })
-
+            
         await axios.get('http://localhost:5000/competitions/event_id/' + defaultID)
             .then(res => {
                 if(res.data.length > 0) {
@@ -70,9 +71,15 @@ export default function Competitions(props) {
         return (
             <div>
                 <br/>
-                <button className="btn btn-dark" onClick={() => props.history.push('/competitions/add/' + selectedEvent)}>Create Competition</button>
+                <button className="btn btn-dark" onClick={() => props.history.push({ pathname: '/competitions/add', state: { eventID: selectedEvent }})}>Create Competition</button>
             </div>
         );
+    }
+
+    function competitionList() {
+        return competitions.map(function(comp) {
+            return <Competition competition={comp} deleteCompetition={deleteCompetition} key={comp._id}/>;
+        })
     }
 
     function deleteCompetition(id) {
@@ -101,11 +108,7 @@ export default function Competitions(props) {
                         </tr>
                     </thead>
                     <tbody>
-                        {
-                            competitions.map(function(comp) {
-                                return <Competition competition={comp} deleteComp={deleteCompetition} key={comp._id}/>;
-                            })
-                        }
+                        {competitionList()}
                     </tbody>
                 </table>
                 {displayAddButton()}

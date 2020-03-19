@@ -24,7 +24,7 @@ export default function Routes({ appProps }) {
             <AppliedRoute path="/events/add" exact component={withAuth(CreateEvent)} appProps={appProps} />
             <AppliedRoute path="/events/:id" exact component={withAuth(EditEvent)} appProps={appProps} />
             <AppliedRoute path="/competitions" exact component={withAuth(Competitions)} appProps={appProps} />
-            <AppliedRoute path="/competitions/add/:id" exact component={withAuth(CreateCompetition)} appProps={appProps} />
+            <AppliedRoute path="/competitions/add" exact component={withAuth(CreateCompetition)} appProps={appProps} />
             <AppliedRoute path="/competitions/:id" exact component={withAuth(EditCompetition)} appProps={appProps} />
             <AppliedRoute path="/criterias" exact component={withAuth(Criterias)} appProps={appProps} />
             <AppliedRoute path="/criterias/add" exact component={withAuth(CreateCriteria)} appProps={appProps} />

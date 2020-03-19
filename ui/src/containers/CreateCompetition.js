@@ -31,6 +31,29 @@ export default function CreateCompetition(props) {
         e.preventDefault();
         setIsLoading(true);
 
+        const newCompetition = {
+            event_id: props.location.state.eventID,
+            name: fields.name,
+            type: fields.type,
+            criterias: fields.criterias,
+            minNoOfPerson: fields.minNoOfPerson,
+            maxNoOfPerson: fields.maxNoOfPerson
+        };
+
+        axios.post('http://localhost:5000/competitions/add', newCompetition)
+            .then(res => {
+                props.history.push({
+                    pathname: "/criterias/add",
+                    state: {
+                        competition: res.data
+                    }
+                });
+            })
+            .catch(err => {
+                setIsLoading(false);
+                console.error(err);
+                alert('Error adding this criteria.');
+            });
     }
 
     function handleCancel() {
