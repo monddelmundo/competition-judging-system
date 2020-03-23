@@ -12,6 +12,7 @@ import CreateCompetition from "./containers/CreateCompetition";
 import Criterias from "./containers/Criterias";
 import CreateCriteria from "./containers/CreateCriteria";
 import EditCriteria from "./containers/EditCriteria";
+import Judges from "./containers/Judges";
 import NotFound from "./containers/NotFound";
 import withAuth from './withAuth';
 
@@ -29,7 +30,7 @@ export default function Routes({ appProps }) {
             <AppliedRoute path="/criterias" exact component={withAuth(Criterias)} appProps={appProps} />
             <AppliedRoute path="/criterias/add" exact component={withAuth(CreateCriteria)} appProps={appProps} />
             <AppliedRoute path="/criterias/:id" exact component={withAuth(EditCriteria)} appProps={appProps} />
-            <AppliedRoute path="/criterias/:id" exact component={withAuth(EditCriteria)} appProps={appProps} />
+            <AppliedRoute path="/judges" exact component={withAuth(Judges)} appProps={appProps} />
             <Route component={NotFound} />
         </Switch>
     );

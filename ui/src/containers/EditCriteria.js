@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
+import { FormGroup, FormControl, FormLabel } from 'react-bootstrap';
 import axios from 'axios'
 import { useFormFields } from '../libs/hooksLib';
 import LoaderButton from '../components/LoaderButton';
@@ -78,8 +78,8 @@ export default function EditCriteria(props) {
         <div className="edit-criteria container">
             <h3>Edit Criteria</h3>
             <form onSubmit={handleSubmit}>
-                <FormGroup controlId="title" bsSize="large">
-                    <ControlLabel>Title</ControlLabel>
+                <FormGroup controlId="title">
+                    <FormLabel>Title</FormLabel>
                     <FormControl
                         autoFocus
                         type="text"
@@ -87,8 +87,8 @@ export default function EditCriteria(props) {
                         onChange={onChangeTitle}
                     />
                 </FormGroup>
-                <FormGroup controlId="value" bsSize="large">
-                    <ControlLabel>Percentage (%)</ControlLabel>
+                <FormGroup controlId="value">
+                    <FormLabel>Percentage (%)</FormLabel>
                     <FormControl
                         type="text"
                         value={value}
@@ -99,7 +99,6 @@ export default function EditCriteria(props) {
                     <LoaderButton
                         block
                         type="submit"
-                        bsSize="large"
                         isLoading={isLoading}
                         disabled={!validateForm()}
                     >
@@ -109,7 +108,6 @@ export default function EditCriteria(props) {
             </form>
             <LoaderButton
                 block
-                bsSize="large"
                 onClick={handleCancel}
             >
                 Cancel

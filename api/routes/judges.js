@@ -13,6 +13,12 @@ router.route('/:id').get((req, res) => {
       .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/event_id/:id').get((req, res) => {
+    Judge.find({ event_id: req.params.id })
+        .then(judges => res.json(judges))
+        .catch(err => res.status(400).json('Error: ' + err));
+})
+
 router.route('/:id').delete((req, res) => {
     Judge.findByIdAndDelete(req.params.id) 
       .then(judges => res.json("Judge has been deleted!!!"))
@@ -25,6 +31,7 @@ router.route('/add').post((req, res) => {
     const middleInitial = req.body.middleInitial;
     const lastName = req.body.lastName;
     const accessCode = req.body.accessCode;
+    const status = req.body.status;
     const scoresheets = req.body.scoresheets;
 
     const newJudge = new Judge ({
@@ -33,6 +40,7 @@ router.route('/add').post((req, res) => {
         middleInitial,
         lastName,
         accessCode,
+        status,
         scoresheets
     });
 
@@ -49,6 +57,7 @@ router.route('/update/:id').post((req, res) => {
             judge.middleInitial = req.body.middleInitial;
             judge.lastName = req.body.lastName;
             judge.accessCode = req.body.accessCode;
+            judge.status = req.body.status;
             judge.scoresheets = req.body.scoresheets;
 
             judge.save()

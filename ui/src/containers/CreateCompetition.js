@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap'
+import { FormGroup, FormControl, FormLabel } from 'react-bootstrap'
 import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import axios from "axios";
@@ -64,8 +64,8 @@ export default function CreateCompetition(props) {
         <div className="create-competition container">
             <h3>Create Competition</h3>
             <form onSubmit={handleSubmit}>
-                <FormGroup controlId="name" bsSize="large">
-                    <ControlLabel>Name</ControlLabel>
+                <FormGroup controlId="name">
+                    <FormLabel>Name</FormLabel>
                     <FormControl
                         autoFocus
                         type="text"
@@ -74,10 +74,10 @@ export default function CreateCompetition(props) {
                         onChange={handleFieldChange}
                     />
                 </FormGroup>
-                <FormGroup controlId="type" bsSize="large">
-                    <ControlLabel>Type</ControlLabel>
+                <FormGroup controlId="type">
+                    <FormLabel>Type</FormLabel>
                     <FormControl
-                        componentClass="select"
+                        as="select"
                         value={fields.type}
                         onChange={handleFieldChange}
                     >
@@ -86,16 +86,16 @@ export default function CreateCompetition(props) {
                         <option key="literary" value="literary">Literary</option>
                     </FormControl>
                 </FormGroup>
-                <FormGroup controlId="minNoOfPerson" bsSize="large">
-                    <ControlLabel>Min. # of Person</ControlLabel>
+                <FormGroup controlId="minNoOfPerson">
+                    <FormLabel>Min. # of Person</FormLabel>
                     <FormControl
                         type="text"
                         value={fields.minNoOfPerson}
                         onChange={handleFieldChange}
                     />
                 </FormGroup>
-                <FormGroup controlId="maxNoOfPerson" bsSize="large">
-                    <ControlLabel>Max # of Person</ControlLabel>
+                <FormGroup controlId="maxNoOfPerson">
+                    <FormLabel>Max # of Person</FormLabel>
                     <FormControl
                         type="text"
                         value={fields.maxNoOfPerson}
@@ -106,7 +106,6 @@ export default function CreateCompetition(props) {
                 <LoaderButton
                         block
                         type="submit"
-                        bsSize="large"
                         isLoading={isLoading}
                         disabled={!validateForm()}
                     >
@@ -116,7 +115,6 @@ export default function CreateCompetition(props) {
             </form>
             <LoaderButton
                 block
-                bsSize="large"
                 onClick={handleCancel}
             >
                 Cancel

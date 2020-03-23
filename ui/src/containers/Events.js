@@ -70,7 +70,7 @@ export default function Events(props) {
             </div>
             <div className="lander">
                 <br/>
-                <button className="btn btn-dark" onClick={() => props.history.push('/events/add')}>Create Event</button>
+                <button className="btn btn-dark" onClick={() => props.history.push('/events/add')}>Add Event</button>
             </div>
         </div>
     );
