@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { FormGroup, FormControl, FormLabel } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import axios from "axios";
 import Auth from "../Auth";
+import { notify } from '../components/Notifications/index';
 
 export default function Login(props) {
 
@@ -63,6 +64,7 @@ export default function Login(props) {
               //localStorage.setItem('cool-jwt', res.data);
               props.setDecodedUser(decoded);
               props.userHasAuthenticated(true);
+              notify(`Hi  ${decoded.username}!`, true);
               props.history.push({ pathname: '/events', state: decoded });
             } else {
               setIsLoading(false);
@@ -73,15 +75,15 @@ export default function Login(props) {
         .catch(err => {
             setIsLoading(false);
             console.error(err);
-            alert('Error logging in please try again');
+            notify("Incorrect username/password!", false);
         });
     }
 
     return (
         <div className="login container">
           <form onSubmit={handleSubmit}>
-            <FormGroup controlId="username" bsSize="large">
-              <ControlLabel>Username</ControlLabel>
+            <FormGroup controlId="username">
+              <FormLabel>Username</FormLabel>
               <FormControl
                 autoFocus
                 type="username"
@@ -89,8 +91,8 @@ export default function Login(props) {
                 onChange={handleFieldChange}
               />
             </FormGroup>
-            <FormGroup controlId="password" bsSize="large">
-              <ControlLabel>Password</ControlLabel>
+            <FormGroup controlId="password">
+              <FormLabel>Password</FormLabel>
               <FormControl
                 type="password"
                 value={fields.password}
@@ -100,7 +102,6 @@ export default function Login(props) {
             <LoaderButton
               block
               type="submit"
-              bsSize="large"
               isLoading={isLoading}
               disabled={!validateForm()}
             >

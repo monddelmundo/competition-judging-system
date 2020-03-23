@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { FormGroup, FormControl, FormLabel } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import "react-datepicker/dist/react-datepicker.css";
@@ -56,8 +56,8 @@ export default function CreateEvent(props) {
         <div className="create-event container">
             <h3>Create Event</h3>
             <form onSubmit={handleSubmit}>
-                <FormGroup controlId="title" bsSize="large">
-                    <ControlLabel>Title</ControlLabel>
+                <FormGroup controlId="title">
+                    <FormLabel>Title</FormLabel>
                     <FormControl
                         autoFocus
                         type="text"
@@ -66,10 +66,10 @@ export default function CreateEvent(props) {
                         onChange={handleFieldChange}
                     />
                 </FormGroup>
-                <FormGroup controlId="category" bsSize="large">
-                    <ControlLabel>Category</ControlLabel>
+                <FormGroup controlId="category">
+                    <FormLabel>Category</FormLabel>
                     <FormControl
-                        componentClass="select"
+                        as="select"
                         placeholder="Category"
                         value={fields.category}
                         onChange={handleFieldChange}
@@ -79,16 +79,16 @@ export default function CreateEvent(props) {
                         <option value="national">National</option>
                     </FormControl>
                 </FormGroup>
-                <FormGroup controlId="dateOfEvent" bsSize="large">
-                    <ControlLabel>Date of Event</ControlLabel>
+                <FormGroup controlId="dateOfEvent">
+                    <FormLabel>Date of Event</FormLabel>
                     <br />
                     <DatePicker
                         selected={dateOfEvent}
                         onChange={(newDate) => setDateOfEvent(newDate)}
                     />
                 </FormGroup>
-                <FormGroup controlId="location" bsSize="large">
-                    <ControlLabel>Location</ControlLabel>
+                <FormGroup controlId="location">
+                    <FormLabel>Location</FormLabel>
                     <FormControl
                         type="text"
                         placeholder="Enter Location"
@@ -96,10 +96,10 @@ export default function CreateEvent(props) {
                         onChange={handleFieldChange}
                     />
                 </FormGroup>
-                <FormGroup controlId="participants" bsSize="large">
-                    <ControlLabel>Participants</ControlLabel>
+                <FormGroup controlId="participants">
+                    <FormLabel>Participants</FormLabel>
                     <FormControl
-                        componentClass="select"
+                        as="select"
                         placeholder="Participants"
                         value={fields.participants}
                         onChange={handleFieldChange}
@@ -113,7 +113,6 @@ export default function CreateEvent(props) {
                     <LoaderButton
                         block
                         type="submit"
-                        bsSize="large"
                         isLoading={isLoading}
                         disabled={!validateForm()}
                     >
@@ -123,7 +122,6 @@ export default function CreateEvent(props) {
             </form>
             <LoaderButton
                 block
-                bsSize="large"
                 onClick={handleCancel}
             >
                 Cancel

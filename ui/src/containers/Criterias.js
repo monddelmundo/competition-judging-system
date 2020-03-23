@@ -56,7 +56,7 @@ export default function Criterias(props) {
         <div className="criterias container">
             <div className="lander">
                 <br />
-                <h3>List of Criteria(s)</h3>
+                <h3>List of Criteria(s) for {competition.name}</h3>
                 <table className="table">
                     <thead className="thead-light">
                         <tr>

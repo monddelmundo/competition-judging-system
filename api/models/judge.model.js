@@ -13,6 +13,7 @@ const judgeSchema = new Schema({
     middleInitial: { type: String, required: true, trim: true, maxlength: 1 },
     lastName: { type: String, required: true, trim: true },
     accessCode: { type: String, required: true, trim: true },
+    status: { type: String, required: true, trim: true },
     scoresheets: [scoresheetSchema]
 });
 

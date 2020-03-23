@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FormGroup, FormControl, ControlLabel } from "react-bootstrap";
+import { FormGroup, FormControl, FormLabel } from "react-bootstrap";
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import LoaderButton from "../components/LoaderButton";
@@ -91,8 +91,8 @@ export default function EditEvent(props) {
         <div className="edit-event container">
             <h3>Edit Event</h3>
             <form onSubmit={handleSubmit}>
-                <FormGroup controlId="title" bsSize="large">
-                    <ControlLabel>Title</ControlLabel>
+                <FormGroup controlId="title">
+                    <FormLabel>Title</FormLabel>
                     <FormControl
                         autoFocus
                         type="text"
@@ -100,10 +100,10 @@ export default function EditEvent(props) {
                         onChange={onChangeTitle}
                     />
                 </FormGroup>
-                <FormGroup controlId="category" bsSize="large">
-                    <ControlLabel>Category</ControlLabel>
+                <FormGroup controlId="category">
+                    <FormLabel>Category</FormLabel>
                     <FormControl
-                        componentClass="select"
+                        as="select"
                         value={category}
                         onChange={onChangeCategory}
                     >
@@ -111,26 +111,26 @@ export default function EditEvent(props) {
                         <option value="national">National</option>
                     </FormControl>
                 </FormGroup>
-                <FormGroup controlId="dateOfEvent" bsSize="large">
-                    <ControlLabel>Date of Event</ControlLabel>
+                <FormGroup controlId="dateOfEvent">
+                    <FormLabel>Date of Event</FormLabel>
                     <br />
                     <DatePicker
                         selected={dateOfEvent}
                         onChange={(newDate) => setDateOfEvent(newDate)}
                     />
                 </FormGroup>
-                <FormGroup controlId="location" bsSize="large">
-                    <ControlLabel>Location</ControlLabel>
+                <FormGroup controlId="location">
+                    <FormLabel>Location</FormLabel>
                     <FormControl
                         type="text"
                         value={location}
                         onChange={onChangeLocation}
                     />
                 </FormGroup>
-                <FormGroup controlId="participants" bsSize="large">
-                    <ControlLabel>Participants</ControlLabel>
+                <FormGroup controlId="participants">
+                    <FormLabel>Participants</FormLabel>
                     <FormControl
-                        componentClass="select"
+                        as="select"
                         value={participants}
                         onChange={onChangeParticipants}
                     >
@@ -138,11 +138,10 @@ export default function EditEvent(props) {
                         <option value="adult">Adult</option>
                     </FormControl>
                 </FormGroup>
-                <FormGroup controlId="loaderBtn" bsSize="large">
+                <FormGroup controlId="loaderBtn">
                     <LoaderButton
                         block
                         type="submit"
-                        bsSize="large"
                         isLoading={isLoading}
                         disabled={!validateForm()}
                     >
@@ -152,7 +151,6 @@ export default function EditEvent(props) {
             </form>
             <LoaderButton
                 block
-                bsSize="large"
                 onClick={handleCancel}
             >
                 Cancel

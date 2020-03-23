@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, withRouter } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Routes from "./Routes";
 import Auth from "./Auth";
+import { Nav, Navbar } from 'react-bootstrap';
+import "bootstrap/dist/css/bootstrap.min.css";
+import Notifications from './components/Notifications/index';
 
 function App(props) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
@@ -38,35 +40,30 @@ function App(props) {
 
   return (
     <div className="App container">
-      <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
-        <Link to="/" className="navbar-brand">ADJUDICATOR</Link>
+      <Notifications />
+      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+        <Navbar.Brand href="/">Adjudicator</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
         
-          {
-            isAuthenticated 
-            ? <div className="collpase navbar-collapse">
-              <ul className="navbar-nav mr-auto">
-                <li className="navbar-item">
-                  <Link to="/events" className="nav-link">Events</Link>
-                </li>
-                <li className="navbar-item">
-                  <Link to="/competitions" className="nav-link">Competitions</Link>
-                </li>
-              </ul>
-              <ul className="navbar-nav ml-auto">
-                <li className="navbar-item">
-                  <Link to="" onClick={handleLogout} className="nav-link">Logout</Link>
-                </li>
-              </ul>
-              </div>
-            : <div className="collpase navbar-collapse">
-                <ul className="navbar-nav ml-auto">
-                <li className="navbar-item">
-                  <Link to="/login" className="nav-link">Login</Link>
-                </li>
-                </ul>
-              </div>
-            }     
-      </nav>
+        { isAuthenticated ?
+          <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto">
+            <Nav.Link href="/events">Events</Nav.Link>
+            <Nav.Link href="/competitions">Competitions</Nav.Link>
+            <Nav.Link href="/judges">Judges</Nav.Link>
+          </Nav>
+          <Nav className="ml-auto">
+            <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+          </Nav>
+          </Navbar.Collapse> 
+          : <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ml-auto">
+            <Nav.Link href="/login">Login</Nav.Link>
+          </Nav>
+          </Navbar.Collapse>  
+        }
+        </Navbar>
+
       <Routes appProps={{ isAuthenticated, userHasAuthenticated, decodedUser, setDecodedUser }} />
     </div>
   );

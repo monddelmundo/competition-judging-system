@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
+import { FormGroup, FormControl, FormLabel } from 'react-bootstrap';
 import LoaderButton from "../components/LoaderButton";
 
 export default function EditCompetition(props) {
@@ -86,8 +86,8 @@ export default function EditCompetition(props) {
         <div className="edit-competition container">
             <h3>Edit Competition</h3>
             <form onSubmit={handleSubmit}>
-                <FormGroup controlId="name" bsSize="large">
-                    <ControlLabel>Name</ControlLabel>
+                <FormGroup controlId="name">
+                    <FormLabel>Name</FormLabel>
                     <FormControl
                         autoFocus
                         type="text"
@@ -95,10 +95,10 @@ export default function EditCompetition(props) {
                         onChange={onChangeName}
                     />
                 </FormGroup>
-                <FormGroup controlId="type" bsSize="large">
-                    <ControlLabel>Type</ControlLabel>
+                <FormGroup controlId="type">
+                    <FormLabel>Type</FormLabel>
                     <FormControl
-                        componentClass="select"
+                        as="select"
                         value={type}
                         onChange={onChangeType}
                     >
@@ -106,27 +106,26 @@ export default function EditCompetition(props) {
                         <option key="literary" value="literary">Literary</option>
                     </FormControl>
                 </FormGroup>
-                <FormGroup controlId="minNoOfPerson" bsSize="large">
-                    <ControlLabel>Min. # of Person</ControlLabel>
+                <FormGroup controlId="minNoOfPerson">
+                    <FormLabel>Min. # of Person</FormLabel>
                     <FormControl
                         type="text"
                         value={minNoOfPerson}
                         onChange={onChangeMinNoOfPerson}
                     />
                 </FormGroup>
-                <FormGroup controlId="maxNoOfPerson" bsSize="large">
-                    <ControlLabel>Max # of Person</ControlLabel>
+                <FormGroup controlId="maxNoOfPerson">
+                    <FormLabel>Max # of Person</FormLabel>
                     <FormControl
                         type="text"
                         value={maxNoOfPerson}
                         onChange={onChangeMaxNoOfPerson}
                     />
                 </FormGroup>
-                <FormGroup controlId="loaderBtn" bsSize="large">
+                <FormGroup controlId="loaderBtn">
                     <LoaderButton
                         block
                         type="submit"
-                        bsSize="large"
                         isLoading={isLoading}
                         disabled={!validateForm()}
                     >
@@ -136,7 +135,6 @@ export default function EditCompetition(props) {
             </form>
             <LoaderButton
                 block
-                bsSize="large"
                 onClick={handleCancel}
             >
                 Cancel
