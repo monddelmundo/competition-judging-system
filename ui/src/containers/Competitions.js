@@ -3,6 +3,11 @@ import axios from "axios";
 import "./Competitions.css";
 import { Link } from "react-router-dom";
 import { FormGroup, FormControl } from "react-bootstrap";
+import AlertDialog from "../components/Dialogs/Dialog";
+import { faTrash, faEdit, faEye } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button } from 'react-bootstrap';
+import { showDialog } from '../components/Dialogs/Dialog';
 
 const Competition = props => (
     <tr>
@@ -11,7 +16,7 @@ const Competition = props => (
         <td>{props.competition.minNoOfPerson}</td>
         <td>{props.competition.maxNoOfPerson}</td>
         <td>
-            <Link to={{ pathname: "/criterias", state: { competition: props.competition }}}>View Criterias</Link> | <Link to={"/competitions/"+props.competition._id}>Edit</Link> | <a href="#" onClick={() => { props.deleteCompetition(props.competition._id) }}>Delete</a>
+            <Link to={{ pathname: "/criterias", state: { competition: props.competition }}}><FontAwesomeIcon icon={faEye} fixedWidth />&nbsp;Criterias</Link> | <Link to={"/competitions/"+props.competition._id}><FontAwesomeIcon icon={faEdit} fixedWidth /></Link> | <Button variant="link" onClick={() => { props.deleteCompetition(props.competition._id); }} ><FontAwesomeIcon icon={faTrash} fixedWidth /></Button>
         </td>
     </tr>
   )
@@ -21,7 +26,9 @@ export default function Competitions(props) {
     const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState('');
     const [display, toDisplay] = useState(false);
-    
+    const [open, openDialog] = useState(false);
+    const [msgType, setMsgType] = useState('');
+
     useEffect(() => {
         onLoad();
     }, []);
@@ -42,7 +49,7 @@ export default function Competitions(props) {
         await axios.get('http://localhost:5000/competitions/event_id/' + defaultID)
             .then(res => {
                 if(res.data.length > 0) {
-                    setCompetitions(res.data);
+                    setCompetitions(res.data.sort((a,b) => (a.name > b.name) ? -1 : ((b.name > a.name) ? 1 : 0)));
                     toDisplay(true);
                 } else {
                     toDisplay(false);
@@ -83,14 +90,28 @@ export default function Competitions(props) {
     }
 
     function deleteCompetition(id) {
-        axios.delete('http://localhost:5000/competitions/'+id)
-          .then(res => console.log(res.data));
+        
+        //setMsgType("delete");
+        showDialog(true, "delete", (res) => {
+            res.then((proceed) => {
+                if(proceed) {
+                    axios.delete('http://localhost:5000/competitions/'+id)
+                        .then(res => console.log(res.data))
+
+                    setCompetitions(competitions.filter(el => el._id !== id));
+                } else
+                    throw new Error("Error");
+            })
+            .catch(err => {
+                console.error(err);
+            });
+        });
+        //axios.delete('http://localhost:5000/competitions/'+id)
+        //  .then(res => console.log(res.data));
         
         //removes the deleted exercise from the state events' array
         //_id came from mongodb's object name
-        //setEvents({
-        //  events: events.filter(el => el._id !== id)
-        //})
+        
     }
 
     function displayCompetitions() {
@@ -116,8 +137,13 @@ export default function Competitions(props) {
         );
     }
 
+    //function showDialog() {
+    //    openDialog(true);
+    //}
+
     return (
         <div className="competitions container">
+            <AlertDialog open={open} msgType={msgType} />
             { (events.length > 0) ? (
             <div className="lander">
                 <div>
