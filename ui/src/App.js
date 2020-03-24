@@ -5,7 +5,7 @@ import Routes from "./Routes";
 import Auth from "./Auth";
 import { Nav, Navbar } from 'react-bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
-import Notifications from './components/Notifications/index';
+import Notifications from './components/Notifications/Notification';
 
 function App(props) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);

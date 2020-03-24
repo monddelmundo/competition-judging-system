@@ -4,7 +4,7 @@ import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import axios from "axios";
 import Auth from "../Auth";
-import { notify } from '../components/Notifications/index';
+import { notify } from '../components/Notifications/Notification';
 
 export default function Login(props) {
 
@@ -64,7 +64,7 @@ export default function Login(props) {
               //localStorage.setItem('cool-jwt', res.data);
               props.setDecodedUser(decoded);
               props.userHasAuthenticated(true);
-              notify(`Hi  ${decoded.username}!`, true);
+              notify(`Hi  ${decoded.username}!`, 'success');
               props.history.push({ pathname: '/events', state: decoded });
             } else {
               setIsLoading(false);
@@ -75,7 +75,7 @@ export default function Login(props) {
         .catch(err => {
             setIsLoading(false);
             console.error(err);
-            notify("Incorrect username/password!", false);
+            notify("Incorrect username/password!", 'error');
         });
     }
 
