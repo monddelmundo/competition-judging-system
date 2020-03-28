@@ -7,6 +7,15 @@ router.route('/').get((req, res) => {
       .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/getIDNumberName/').get((req, res) => {
+    Church.find()
+        .select('_id churchNumber name')
+        .exec(function(err, churches) {
+            (err) ? res.status(400).json('Error ' + err)
+            : res.json(churches)
+        });
+});
+
 router.route('/:id').get((req, res) => {
     Church.findById(req.params.id) 
       .then(churches => res.json(churches))

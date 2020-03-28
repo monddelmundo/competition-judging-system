@@ -3,6 +3,8 @@ import { FormGroup, FormControl, FormLabel } from 'react-bootstrap'
 import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import axios from "axios";
+import AlertDialog, { showDialog } from "../components/Dialogs/Dialog";
+import { notify } from '../components/Notifications/Notification';
 
 export default function CreateCompetition(props) {
     
@@ -29,31 +31,45 @@ export default function CreateCompetition(props) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        setIsLoading(true);
 
-        const newCompetition = {
-            event_id: props.location.state.eventID,
-            name: fields.name,
-            type: fields.type,
-            criterias: fields.criterias,
-            minNoOfPerson: fields.minNoOfPerson,
-            maxNoOfPerson: fields.maxNoOfPerson
-        };
+        showDialog(true, "add", (res) => {
+            res.then((proceed) => {
+                if(proceed) {
+                    setIsLoading(true);
 
-        axios.post('http://localhost:5000/competitions/add', newCompetition)
-            .then(res => {
-                props.history.push({
-                    pathname: "/criterias/add",
-                    state: {
-                        competition: res.data
-                    }
-                });
+                    const newCompetition = {
+                        event_id: props.location.state.eventID,
+                        name: fields.name,
+                        type: fields.type,
+                        criterias: fields.criterias,
+                        minNoOfPerson: fields.minNoOfPerson,
+                        maxNoOfPerson: fields.maxNoOfPerson
+                    };
+
+                    axios.post('http://localhost:5000/competitions/add', newCompetition)
+                        .then(res => {
+                            notify(`New competition was added successfully!`, "success")
+
+                            props.history.push({
+                                pathname: "/criterias/add",
+                                state: {
+                                    competition: res.data
+                                }
+                            });
+                        })
+                        .catch(err => {
+                            setIsLoading(false);
+                            console.error(err);
+                            notify("Error adding this competition.", "error")
+                        });
+            } else
+                throw new Error("Error");
             })
             .catch(err => {
-                setIsLoading(false);
                 console.error(err);
-                alert('Error adding this criteria.');
+                notify("Unexpected error!", "error");
             });
+        });
     }
 
     function handleCancel() {
@@ -62,6 +78,7 @@ export default function CreateCompetition(props) {
 
     return (
         <div className="create-competition container">
+            <AlertDialog />
             <h3>Create Competition</h3>
             <form onSubmit={handleSubmit}>
                 <FormGroup controlId="name">

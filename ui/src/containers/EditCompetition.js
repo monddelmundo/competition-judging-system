@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FormGroup, FormControl, FormLabel } from 'react-bootstrap';
 import LoaderButton from "../components/LoaderButton";
+import AlertDialog, { showDialog } from '../components/Dialogs/Dialog';
+import { notify } from '../components/Notifications/Notification';
 
 export default function EditCompetition(props) {
 
@@ -55,27 +57,43 @@ export default function EditCompetition(props) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        setIsLoading(true);
+        showDialog(true, "update", (res) => {
+            res.then((proceed) => {
+                if(proceed) {
+                    setIsLoading(true);
 
-        const updatedCompetition = {
-            event_id: eventID,
-            name: name,
-            type: type,
-            criterias: criterias,
-            minNoOfPerson: minNoOfPerson,
-            maxNoOfPerson: maxNoOfPerson
-        };
+                    const updatedCompetition = {
+                        event_id: eventID,
+                        name: name,
+                        type: type,
+                        criterias: criterias,
+                        minNoOfPerson: minNoOfPerson,
+                        maxNoOfPerson: maxNoOfPerson
+                    };
 
-        axios.post('http://localhost:5000/competitions/update/' + props.match.params.id, updatedCompetition)
-            .then(res => console.log(res.data))
-            .catch(err => {
-                setIsLoading(false);
-                console.error(err);
-                alert('Error updating this competition.');
-            });
+                    axios.post('http://localhost:5000/competitions/update/' + props.match.params.id, updatedCompetition)
+                        .then(res => {
+                            notify(`Competition was updated successfully!`, "success")
+                            console.log(res.data)
+                            props.history.push('/competitions');
+                            //window.location.reload();
+                        })
+                        .catch(err => {
+                            setIsLoading(false);
+                            console.error(err);
+                            notify("Error updating this competition.", "error")
+                        });
 
-        props.history.push('/competitions');
-        window.location.reload();
+                    props.history.push('/competitions');
+                    window.location.reload();
+                } else
+                    throw new Error("Error");
+                })
+                .catch(err => {
+                    console.error(err);
+                    notify("Unexpected error!", "error");
+                });
+        });
     }
 
     function handleCancel() {
@@ -84,6 +102,7 @@ export default function EditCompetition(props) {
 
     return (
         <div className="edit-competition container">
+            <AlertDialog />
             <h3>Edit Competition</h3>
             <form onSubmit={handleSubmit}>
                 <FormGroup controlId="name">

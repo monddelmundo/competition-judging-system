@@ -5,7 +5,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { faQuestionCircle, faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ee from 'event-emitter';
+import "./Dialog.css";
 
 const emitter = new ee();
 
@@ -48,6 +51,7 @@ export default class AlertDialog extends React.Component {
     handleConfirm() {
         this.setState({ open: false });
         this.state.callBackFunc(Promise.resolve(true));
+        //this.state.callBackFunc(Promise.reject(false)); //for testing
     }
 
     render() {
@@ -60,6 +64,8 @@ export default class AlertDialog extends React.Component {
                     aria-describedby="alert-dialog-description"
                 >
                     <DialogTitle id="alert-dialog-title">
+                        <FontAwesomeIcon icon={faQuestionCircle}/>
+                        &nbsp;
                         Confirmation    
                     </DialogTitle>
                     <DialogContent>
@@ -68,10 +74,14 @@ export default class AlertDialog extends React.Component {
                     </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                    <Button onClick={this.handleClose.bind(this)} color="primary">
+                    <Button onClick={this.handleClose.bind(this)} variant="outlined" autoFocus>
+                        <FontAwesomeIcon icon={faTimes} />
+                        &nbsp;
                         Cancel
                     </Button>
-                    <Button onClick={this.handleConfirm.bind(this)} color="primary" autoFocus>
+                    <Button onClick={this.handleConfirm.bind(this)} variant="outlined">
+                        <FontAwesomeIcon icon={faCheck} />
+                        &nbsp;
                         Confirm
                     </Button>
                     </DialogActions>
@@ -79,57 +89,4 @@ export default class AlertDialog extends React.Component {
             </>
         );
     }
-    
-    /*const [open, setOpen] = useState(false);
-    const [msg, setMsg] = useState('');
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    useEffect(() => {
-        onLoad();
-    }, []);
-
-    function onLoad() {
-        if(props.msgType === "add") {
-            setMsg("Do you really want to add this?");
-        } else if (props.msgType === "update") {
-            setMsg("Can you confirm your changes?")
-        } else {
-            setMsg("Are you sure you want to delete this?")
-        }
-    }
-
-    return (
-        <div>
-        <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-        >
-            <DialogTitle id="alert-dialog-title">
-                Confirmation    
-            </DialogTitle>
-            <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-                {msg}
-            </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-            <Button onClick={handleClose} color="primary">
-                Cancel
-            </Button>
-            <Button onClick={handleClose} color="primary" autoFocus>
-                Confirm
-            </Button>
-            </DialogActions>
-        </Dialog>
-        </div>
-    );*/
 }

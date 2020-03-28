@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
+import { FormGroup, FormControl, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { Link } from "react-router-dom";
+import { faTrash, faEdit, faEye, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import AlertDialog, { showDialog } from '../components/Dialogs/Dialog';
+import { notify } from '../components/Notifications/Notification';
 
 const Judge = props => {
 
@@ -17,7 +21,19 @@ const Judge = props => {
             <td>{props.judge.accessCode}</td>
             <td>{props.judge.status}</td>
             <td>
-                <Link to={{ pathname: "/scoresheets", state: { judge: props.judge }}}>View Scoresheets</Link> | <Link to={"/judges/"+props.judge._id}>Edit</Link> | <a href="#" onClick={() => { props.deleteJudge(props.judge._id) }}>Delete</a>
+                <Link to={{ pathname: "/scoresheets", state: { judge: props.judge }}}>
+                    <FontAwesomeIcon icon={faEye} fixedWidth />&nbsp;Scoresheets
+                </Link> 
+                &nbsp; | &nbsp;
+                <Link to={"/judges/"+props.judge._id}>
+                    <FontAwesomeIcon icon={faEdit} fixedWidth />
+                </Link> 
+                &nbsp; |
+                <Button variant="link" onClick={() => { 
+                    props.deleteJudge(props.judge._id) 
+                }}>
+                    <FontAwesomeIcon icon={faTrash} fixedWidth />
+                </Button>
             </td>
         </tr>
     );
@@ -78,8 +94,7 @@ export default function Judges(props) {
     function displayAddButton() {
         return (
             <div>
-                <br/>
-                <button className="btn btn-dark" onClick={() => props.history.push({ pathname: '/judges/add', state: { eventID: selectedEvent }})}>Add Judge</button>
+                <Button variant="light" size="lg" onClick={() => props.history.push({ pathname: '/judges/add', state: { eventID: selectedEvent }})}><FontAwesomeIcon icon={faPlus} /> Judge</Button>
             </div>
         );
     }
@@ -91,14 +106,22 @@ export default function Judges(props) {
     }
 
     function deleteJudge(id) {
-        axios.delete('http://localhost:5000/judges/'+id)
-          .then(res => console.log(res.data));
-        
-        //removes the deleted exercise from the state events' array
-        //_id came from mongodb's object name
-        //setEvents({
-        //  events: events.filter(el => el._id !== id)
-        //})
+        showDialog(true, "delete", (res) => {
+            res.then((proceed) => {
+                if(proceed) {
+                    axios.delete('http://localhost:5000/judges/'+id)
+                    .then(res => console.log(res.data));
+                        setJudges(judges.filter(jl => jl._id !== id));
+
+                        notify("Judge was deleted successfully!", "success")
+                } else
+                    throw new Error("Error");
+                })
+                .catch(err => {
+                    console.error(err);
+                    notify("Error Deleting this data!", "error");
+                });
+            });
     }
 
     function displayJudges() {
@@ -125,6 +148,7 @@ export default function Judges(props) {
 
     return (
         <div className="judges container">
+            <AlertDialog />
             { (events.length > 0) ? (
             <div className="lander">
                 <div>

@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Events.css";
 import { Link } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import { faTrash, faEdit, faEye, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import AlertDialog, { showDialog } from '../components/Dialogs/Dialog';
+import { notify } from '../components/Notifications/Notification';
 
 const Event = props => (
     <tr>
@@ -10,7 +15,13 @@ const Event = props => (
       <td>{props.event.location}</td>
       <td>{props.event.status}</td>
       <td>
-        <Link to={"/events/"+props.event._id}>Edit</Link> | <a href="#" onClick={() => { props.deleteEvent(props.event._id) }}>Delete</a>
+        <Link to={"/events/"+props.event._id}>
+            <FontAwesomeIcon icon={faEdit} fixedWidth />
+        </Link> 
+        &nbsp; | 
+        <Button variant="link" href="#" onClick={() => { props.deleteEvent(props.event._id) }}>
+            <FontAwesomeIcon icon={faTrash} fixedWidth />
+        </Button>
       </td>
     </tr>
   )
@@ -38,9 +49,23 @@ export default function Events(props) {
     }
 
     function deleteEvent(id) {
-        axios.delete('http://localhost:5000/events/'+id)
-          .then(res => console.log(res.data));
-        
+        showDialog(true, "delete", (res) => {
+            res.then((proceed) => {
+                if(proceed) {
+                    axios.delete('http://localhost:5000/events/'+id)
+                        .then(res => console.log(res.data));
+
+                    setEvents(events.filter(el => el._id !== id));
+
+                    notify("Event was deleted successfully!", "success")
+                } else
+                    throw new Error("Error");
+                })
+                .catch(err => {
+                    console.error(err);
+                    notify("Error Deleting this data!", "error");
+                });
+        });
         //removes the deleted exercise from the state events' array
         //_id came from mongodb's object name
         //setEvents({
@@ -50,6 +75,7 @@ export default function Events(props) {
     
     return (
         <div className="events container">
+            <AlertDialog />
             <div className="lander">
                 <br />
                 <h3>List of Event(s)</h3>
@@ -69,8 +95,7 @@ export default function Events(props) {
                 </table>
             </div>
             <div className="lander">
-                <br/>
-                <button className="btn btn-dark" onClick={() => props.history.push('/events/add')}>Add Event</button>
+                <Button variant="light" size="lg" onClick={() => props.history.push('/events/add')}><FontAwesomeIcon icon={faPlus} /> Event</Button>
             </div>
         </div>
     );

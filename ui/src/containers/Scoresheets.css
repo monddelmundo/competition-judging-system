@@ -1,0 +1,41 @@
+.tab-nav-link.active {
+    color: white !important;
+    background-color: turquoise !important;
+    font-weight: 600;
+    text-align: center;
+}
+
+.tab-nav-link {
+    color: black !important;
+    background-color: #F4F4F4 !important;
+    font-weight: 600;
+    text-align: center;
+}
+
+.table-horiz-scroll {
+    width: 100%;
+    overflow-x:auto;
+ }
+
+ .table-horiz-scroll > table {
+    width: 150%;
+    height: 100%;
+  }
+
+.legend-table {
+    border-collapse: collapse;
+}
+
+.legend-table {
+    border: 1px solid black;
+}
+
+.legend-th {
+    border: 1px solid black;
+    font-size: 14px;
+}
+
+.legend-td {
+    border: 1px solid black;
+    font-size: 14px;
+}

@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Competitions.css";
 import { Link } from "react-router-dom";
-import { FormGroup, FormControl } from "react-bootstrap";
-import AlertDialog from "../components/Dialogs/Dialog";
-import { faTrash, faEdit, faEye } from "@fortawesome/free-solid-svg-icons";
+import { Button, FormGroup, FormControl } from "react-bootstrap";
+import { faTrash, faEdit, faEye, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from 'react-bootstrap';
-import { showDialog } from '../components/Dialogs/Dialog';
+import AlertDialog, { showDialog } from '../components/Dialogs/Dialog';
+import { notify } from '../components/Notifications/Notification';
 
 const Competition = props => (
     <tr>
@@ -16,7 +15,19 @@ const Competition = props => (
         <td>{props.competition.minNoOfPerson}</td>
         <td>{props.competition.maxNoOfPerson}</td>
         <td>
-            <Link to={{ pathname: "/criterias", state: { competition: props.competition }}}><FontAwesomeIcon icon={faEye} fixedWidth />&nbsp;Criterias</Link> | <Link to={"/competitions/"+props.competition._id}><FontAwesomeIcon icon={faEdit} fixedWidth /></Link> | <Button variant="link" onClick={() => { props.deleteCompetition(props.competition._id); }} ><FontAwesomeIcon icon={faTrash} fixedWidth /></Button>
+            <Link to={{ pathname: "/criterias", state: { competition: props.competition }}}>
+                <FontAwesomeIcon icon={faEye} fixedWidth />&nbsp;Criterias
+            </Link> 
+            &nbsp; | &nbsp;
+            <Link to={"/competitions/"+props.competition._id}>
+                <FontAwesomeIcon icon={faEdit} fixedWidth />
+            </Link> 
+            &nbsp; | 
+            <Button variant="link" onClick={() => { 
+                props.deleteCompetition(props.competition._id); 
+            }}>
+                <FontAwesomeIcon icon={faTrash} fixedWidth />
+            </Button>
         </td>
     </tr>
   )
@@ -26,8 +37,6 @@ export default function Competitions(props) {
     const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState('');
     const [display, toDisplay] = useState(false);
-    const [open, openDialog] = useState(false);
-    const [msgType, setMsgType] = useState('');
 
     useEffect(() => {
         onLoad();
@@ -77,8 +86,7 @@ export default function Competitions(props) {
     function displayAddButton() {
         return (
             <div>
-                <br/>
-                <button className="btn btn-dark" onClick={() => props.history.push({ pathname: '/competitions/add', state: { eventID: selectedEvent }})}>Add Competition</button>
+                <Button variant="light" size="lg" onClick={() => props.history.push({ pathname: '/competitions/add', state: { eventID: selectedEvent }})}><FontAwesomeIcon icon={faPlus} /> Competition</Button>
             </div>
         );
     }
@@ -90,20 +98,21 @@ export default function Competitions(props) {
     }
 
     function deleteCompetition(id) {
-        
-        //setMsgType("delete");
         showDialog(true, "delete", (res) => {
             res.then((proceed) => {
                 if(proceed) {
                     axios.delete('http://localhost:5000/competitions/'+id)
-                        .then(res => console.log(res.data))
+                        .then(res => console.log(res.data));
 
                     setCompetitions(competitions.filter(el => el._id !== id));
+
+                    notify("Competition was deleted successfully!", "success")
                 } else
                     throw new Error("Error");
             })
             .catch(err => {
                 console.error(err);
+                notify("Error Deleting this data!", "error");
             });
         });
         //axios.delete('http://localhost:5000/competitions/'+id)
@@ -143,7 +152,7 @@ export default function Competitions(props) {
 
     return (
         <div className="competitions container">
-            <AlertDialog open={open} msgType={msgType} />
+            <AlertDialog />
             { (events.length > 0) ? (
             <div className="lander">
                 <div>

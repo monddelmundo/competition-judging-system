@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Criterias.css';
+import { Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
+import AlertDialog, { showDialog } from '../components/Dialogs/Dialog';
+import { notify } from '../components/Notifications/Notification';
+import { faTrash, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Criteria = props => (
     <tr>
         <td>{props.criteria.title}</td>
         <td>{props.criteria.value}</td>
         <td>
-            <Link to={{ pathname: "/criterias/"+props.criteria._id, state: { competition: props.competition }}}>Edit</Link> | <Link to={{ pathname: "/criterias", state: { competition: props.competition }}} onClick={() => { props.deleteCriteria(props.criteria._id) }}>Delete</Link>
+            <Link to={{ pathname: "/criterias/"+props.criteria._id, state: { competition: props.competition }}}>
+                <FontAwesomeIcon icon={faEdit} fixedWidth />
+            </Link> 
+            &nbsp; |
+            <Button variant="link" onClick={() => { 
+                props.deleteCriteria(props.criteria._id) 
+            }}>
+                <FontAwesomeIcon icon={faTrash} fixedWidth />
+            </Button>
         </td>
     </tr>
 )
@@ -26,10 +39,36 @@ export default function Criterias(props) {
     }
 
     function deleteCriteria(id) {
-        axios.delete('http://localhost:5000/competitions/' + competition._id + '/delete/'+id)
-            .then(res => console.log(res.data));
-        
-        props.location.state.competition.criterias = competition.criterias.filter(cl => cl._id !== id);
+        showDialog(true, "delete", (res) => {
+            res.then((proceed) => {
+                if(proceed) {
+                    axios.delete('http://localhost:5000/competitions/' + competition._id + '/delete/'+id)
+                        .then((res) => { 
+                            console.log(res.data);
+                            let comp = competition;
+
+                            comp.criterias = comp.criterias.filter(cl => cl._id !== id);
+                            notify("Criteria was deleted successfully!", "success")
+
+                            props.history.push({
+                                pathname: '/criterias',
+                                state: {
+                                    competition: comp
+                                }
+                            });
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            notify("Error Deleting this data!", "error");
+                        });                    
+                } else
+                    throw new Error("Error");
+                })
+                .catch(err => {
+                    console.error(err);
+                    notify("Error Deleting this data!", "error");
+                });
+            });
     }
 
     function criteriaList() {
@@ -54,6 +93,7 @@ export default function Criterias(props) {
 
     return (
         <div className="criterias container">
+            <AlertDialog />
             <div className="lander">
                 <br />
                 <h3>List of Criteria(s) for {competition.name}</h3>
@@ -80,8 +120,7 @@ export default function Criterias(props) {
                 </table>
             </div>
             <div className="lander">
-                <br/>
-                <button className="btn btn-dark" onClick={() => props.history.push({ pathname: '/criterias/add', state: { competition: competition }})}>Create Criterias</button>
+                <Button variant="light" size="lg" onClick={() => props.history.push({ pathname: '/criterias/add', state: { competition: competition }})}><FontAwesomeIcon icon={faPlus} /> Criterias</Button>
             </div>
         </div>
     );
