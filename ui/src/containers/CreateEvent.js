@@ -5,6 +5,8 @@ import { useFormFields } from "../libs/hooksLib";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from 'react-datepicker';
 import axios from "axios";
+import AlertDialog, { showDialog } from '../components/Dialogs/Dialog';
+import { notify } from '../components/Notifications/Notification';
 
 export default function CreateEvent(props) {
     const [fields, handleFieldChange] = useFormFields({
@@ -27,33 +29,47 @@ export default function CreateEvent(props) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        setIsLoading(true);
-        
-        const newEvent = {
-            title: fields.title,
-            category: fields.category,
-            dateOfEvent: dateOfEvent,
-            location: fields.location,
-            participants: fields.participants,
-            status: "inpr"
-        }
-
-        //console.log(newEvent);
-        axios.post('http://localhost:5000/events/add', newEvent)
-            .then(res => console.log(res.data))
-            .catch(err => {
-                setIsLoading(false);
-                console.error(err);
-                alert('Error adding this event.');
-            });
-            
-        props.history.push('/events');
-        window.location.reload();
+        showDialog(true, "add", (res) => {
+            res.then((proceed) => {
+                if(proceed) {
+                    setIsLoading(true);
+                    
+                    const newEvent = {
+                        title: fields.title,
+                        category: fields.category,
+                        dateOfEvent: dateOfEvent,
+                        location: fields.location,
+                        participants: fields.participants,
+                        status: "inpr"
+                    }
+                    
+                    axios.post('http://localhost:5000/events/add', newEvent)
+                        .then(res => {
+                            notify(`New event was added successfully!`, "success")
+                            console.log(res.data) 
+                            props.history.push('/events');
+                            //window.location.reload();
+                        })
+                        .catch(err => {
+                            setIsLoading(false);
+                            console.error(err);
+                            notify("Error adding this event.", "error")
+                        });
+                    
+                } else
+                    throw new Error("Error");
+                })
+                .catch(err => {
+                    console.error(err);
+                    notify("Unexpected error!", "error");
+                });
+        });
         
     }
 
     return (
         <div className="create-event container">
+            <AlertDialog />
             <h3>Create Event</h3>
             <form onSubmit={handleSubmit}>
                 <FormGroup controlId="title">

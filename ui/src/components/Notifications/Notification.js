@@ -70,7 +70,7 @@ export default class Notifications extends React.Component {
 
     render() {
 
-        if(this.state.isSuccess) {
+        if(this.state.isSuccess === "success") {
             return (
                 <Container top={this.state.top} color="5bc0de">
                     <FontAwesomeIcon icon={faBell}></FontAwesomeIcon>&nbsp;{this.state.msg}

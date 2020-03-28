@@ -1,0 +1,10 @@
+#alert-dialog-title {
+    color: white;
+    font-weight: 600;
+    background-color: black;
+    margin-bottom: 15px;
+}
+
+#alert-dialog-description {
+    font-weight: 200;
+}

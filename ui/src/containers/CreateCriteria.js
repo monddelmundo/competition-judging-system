@@ -3,6 +3,8 @@ import { FormGroup, FormControl, FormLabel } from 'react-bootstrap';
 import LoaderButton from '../components/LoaderButton';
 import { useFormFields } from '../libs/hooksLib';
 import axios from 'axios';
+import AlertDialog, { showDialog } from '../components/Dialogs/Dialog';
+import { notify } from '../components/Notifications/Notification';
 
 export default function CreateCriteria(props) {
 
@@ -27,22 +29,37 @@ export default function CreateCriteria(props) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        setIsLoading(true);
+        showDialog(true, "add", (res) => {
+            res.then((proceed) => {
+                if(proceed) {
+                    setIsLoading(true);
 
-        axios.post('http://localhost:5000/competitions/' + props.location.state.competition._id + '/add', fields)
-            .then(res => {
-                props.history.push({
-                    pathname: '/criterias',
-                    state: {
-                        competition: res.data
-                    }
+                    axios.post('http://localhost:5000/competitions/' + props.location.state.competition._id + '/add', fields)
+                        .then(res => {
+                            notify(`New criteria was added successfully!`, "success")
+
+                            props.history.push({
+                                pathname: '/criterias',
+                                state: {
+                                    competition: res.data
+                                }
+                            });
+                        })
+                        .catch(err => {
+                            setIsLoading(false);
+                            console.error(err);
+                            notify("Error adding this criteria.", "error")
+                        });
+                    
+                } else
+                    throw new Error("Error");
+                })
+                .catch(err => {
+                    console.error(err);
+                    notify("Unexpected error!", "error");
                 });
-            })
-            .catch(err => {
-                setIsLoading(false);
-                console.error(err);
-                alert('Error adding this criteria.');
-            });
+        });
+        
     }
 
     function handleCancel() {
@@ -56,6 +73,7 @@ export default function CreateCriteria(props) {
 
     return (
         <div className="create-criteria container">
+            <AlertDialog />
             <h3>Create Criteria</h3>
             <form onSubmit={handleSubmit}>
                 <FormGroup controlId="title">

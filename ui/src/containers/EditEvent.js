@@ -4,6 +4,8 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import LoaderButton from "../components/LoaderButton";
 import "react-datepicker/dist/react-datepicker.css";
+import AlertDialog, { showDialog } from '../components/Dialogs/Dialog';
+import { notify } from '../components/Notifications/Notification';
 
 export default function EditEvent(props) {
 
@@ -63,32 +65,47 @@ export default function EditEvent(props) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        setIsLoading(true);
-        
-        const updatedEvent = {
-            title: title,
-            category: category,
-            dateOfEvent: dateOfEvent,
-            location: location,
-            participants: participants,
-            status: status,
-            accessCode: accessCode
-        }
+        showDialog(true, "update", (res) => {
+            res.then((proceed) => {
+                if(proceed) {
+                    setIsLoading(true);
+                    
+                    const updatedEvent = {
+                        title: title,
+                        category: category,
+                        dateOfEvent: dateOfEvent,
+                        location: location,
+                        participants: participants,
+                        status: status,
+                        accessCode: accessCode
+                    }
 
-        axios.post('http://localhost:5000/events/update/' + props.match.params.id, updatedEvent)
-            .then(res => console.log(res.data))
-            .catch(err => {
-                setIsLoading(false);
-                console.error(err);
-                alert('Error updating this event.');
-            });
-
-        props.history.push('/events');
-        window.location.reload();
+                    axios.post('http://localhost:5000/events/update/' + props.match.params.id, updatedEvent)
+                        .then(res => {
+                            notify(`Event was updated successfully!`, "success")
+                            console.log(res.data);
+                            props.history.push('/events');
+                            //window.location.reload();
+                        })
+                        .catch(err => {
+                            setIsLoading(false);
+                            console.error(err);
+                            notify("Error updating this event.", "error")
+                        });
+                                            
+                } else
+                    throw new Error("Error");
+                })
+                .catch(err => {
+                    console.error(err);
+                    notify("Unexpected error!", "error");
+                });
+        });
     }
 
     return (
         <div className="edit-event container">
+            <AlertDialog />
             <h3>Edit Event</h3>
             <form onSubmit={handleSubmit}>
                 <FormGroup controlId="title">
