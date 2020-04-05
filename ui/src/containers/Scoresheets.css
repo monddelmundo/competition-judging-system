@@ -14,6 +14,8 @@
 
 .table-horiz-scroll {
     overflow-x:auto;
+    height: 550px;
+    margin-bottom: 30px;
  }
 
  .table-horiz-scroll > table {
@@ -36,4 +38,8 @@
 .legend-td {
     border: 1px solid black;
     font-size: 14px;
+}
+
+.btnExport {
+    margin-bottom: 15px;
 }

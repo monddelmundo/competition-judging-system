@@ -7,6 +7,8 @@ import { faTrash, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AlertDialog, { showDialog } from '../components/Dialogs/Dialog';
 import { notify } from '../components/Notifications/Notification';
+import { ScoresheetTbl } from '../components/ScoreTable';
+import { ExportCSV } from '../components/ExportCSV';
 
 export default function Scoresheets(props) {
 
@@ -14,6 +16,7 @@ export default function Scoresheets(props) {
     const [churches, setChurches] = useState([]);
     const [competitions, setCompetitions] = useState([])
     const [selectedChurch, setSelectedChurch] = useState('');
+    const [cols, updateCols] = useState([]);
 
     useEffect(() => {
         onLoad();
@@ -53,17 +56,56 @@ export default function Scoresheets(props) {
         let retVal = 0;
 
         for( var i = 0; i < criterias.length; i++ ) {
-            retVal += ((entries) ? entries[i] : 0)  * (criterias[i].value / 100);
+            retVal += ((entries) ? ((entries[i]) ? entries[i] : 0) : 0)  * (criterias[i].value / 100);
         }
 
         return retVal;
     }
 
+    function round(number) {
+        return Math.round((number + 0.00001) * 100) / 100;
+    }
+
+    function toCol(competition, entry) {
+        return (
+            <>
+                <tr>
+                    <td></td>
+                    <td>{competition.name}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {
+                    competition.criterias.map((criteria, criteriaIndex) => (
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>{criteria.title}</td>
+                                <td>{criteria.value}</td>
+                                <td>{entry ? (entry.criterias ? entry.criterias[criteriaIndex] : 0) : 0}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                    ))
+                }
+            </>
+        )
+    }
+
     function getScoresheet(church) {
         const scoresheet = judge.scoresheets.filter(s => s.church_id === church._id)[0];
-        let musical = [ <tr><td>Musical</td><td></td><td></td><td></td><td></td><td></td></tr> ];
-        let literary = [ <tr><td>Literary</td><td></td><td></td><td></td><td></td><td></td></tr> ];
+        //let musical = [ <tr><td>Musical</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr> ];
+        //let literary = [ <tr><td>Literary</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr> ];
+        let musical = [{ type: 'Musical', title: '', criterias: '', pct: '', score: '', total: '', overall: '', overallTotal: '' }];
+        let literary = [{ type: 'Literary', title: '', criterias: '', pct: '', score: '', total: '', overall: '', overallTotal: '' }];
         let retVal = [];
+        let total = [];
+        let overall = [];
         
         (competitions.filter(c => c.type === "musical")).map((competition) => {
             let entry = [];
@@ -72,132 +114,67 @@ export default function Scoresheets(props) {
                 entry = scoresheet.musical.find(entry => entry.competition_id == competition._id);
             }
                 
-                musical.push(
-                    <>
-                        <tr>
-                            <td></td>
-                            <td>{competition.name}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td>{getOverall(competition.criterias, entry ? entry.criterias : [])}</td>
-                        </tr>
-                        {
-                            competition.criterias.map((criteria, criteriaIndex) => (
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td>{criteria.title}</td>
-                                        <td>{criteria.value}</td>
-                                        <td>{entry ? (entry.criterias ? entry.criterias[criteriaIndex] : 0) : 0}</td>
-                                        <td></td>
-                                    </tr>
-                                )
-                            )
-                        }
-                    </>
-                )
-            
-            
+            musical.push({ type: '', title: competition.name, criterias: '', pct: '', score: '', total: '', overall: '', overallTotal: '' });
+            competition.criterias.map((criteria, criteriaIndex) => {
+                musical.push({ type: '', title: '', criterias: criteria.title, pct: criteria.value, score: (entry ? (entry.criterias ? entry.criterias[criteriaIndex] : 0) : 0).toString(), total: '', overall: '', overallTotal: '' });
+            })
+
+            musical.push({ type: '', title: '', criterias: '', pct: '', score: '', total: (total[total.push(round(getOverall(competition.criterias, entry ? entry.criterias : []))) - 1]).toString(), overall: '', overallTotal: '' });
         })
-        retVal.push(musical);
-        retVal.push(literary);
-        
+
+        musical.push({ type: '', title: '', criterias: '', pct: '', score: '', total: '', overall: (overall[overall.push(round(total.reduce((a, b) => a + b, 0) / total.length)) - 1]).toString(), overallTotal: '' });
+
+        total = [];
+
+        (competitions.filter(c => c.type === "literary")).map((competition) => {
+            let entry = [];
+
+            if(scoresheet) {
+                entry = scoresheet.literary.find(entry => entry.competition_id == competition._id);
+            }
+
+            literary.push({ type: '', title: competition.name, criterias: '', pct: '', score: '', total: '', overall: '', overallTotal: '' });
+            competition.criterias.map((criteria, criteriaIndex) => {
+                literary.push({ type: '', title: '', criterias: criteria.title, pct: criteria.value, score: (entry ? (entry.criterias ? entry.criterias[criteriaIndex] : 0) : 0).toString(), total: '', overall: '', overallTotal: '' });
+            })
+
+            literary.push({ type: '', title: '', criterias: '', pct: '', score: '', total: (total[total.push(round(getOverall(competition.criterias, entry ? entry.criterias : []))) - 1]).toString(), overall: '', overallTotal: '' });
+        })
+
+        literary.push({ type: '', title: '', criterias: '', pct: '', score: '', total: '', overall: (overall[overall.push(round(total.reduce((a, b) => a + b, 0) / total.length)) - 1]).toString(), overallTotal: '' });
+
+        retVal = retVal.concat(musical);
+        retVal = retVal.concat(literary);
+
+        retVal = retVal.concat({ type: '', title: '', criterias: '', pct: '', score: '', total: '', overall: '', overallTotal: (round(overall.reduce((a, b) => a + b, 0) / overall.length)).toString() });
+
         return retVal;
-
-        // if(scoresheet) {
-        //     scoresheet.musical.map((entry) => { //switch this below
-        //         let comp = competitions.find(competition => competition._id == entry.competition_id);
-        //         let x = 0;
-                
-        //         if(comp) {
-        //             console.log(comp)
-        //             musical.push(
-        //                 <>
-        //                     <tr>
-        //                         <td></td>
-        //                         <td>{comp.name}</td>
-        //                         <td></td>
-        //                         <td></td>
-        //                         <td></td>
-        //                         <td>{getOverall(comp.criterias, entry.criterias)}</td>
-        //                     </tr>
-        //                     {
-        //                         comp.criterias.map((criteria, criteriaIndex) => {
-                                    
-        //                             return (
-        //                                 <tr>
-        //                                     <td></td>
-        //                                     <td></td>
-        //                                     <td>{criteria.title}</td>
-        //                                     <td>{criteria.value}</td>
-        //                                     <td>{entry.criterias[criteriaIndex]}</td>
-        //                                     <td></td>
-        //                                 </tr>
-        //                             );
-        //                         })
-        //                     }
-        //                 </>
-        //             )
-        //         }
-        //     })
-            
-        //     retVal.push(musical);
-        //     retVal.push(literary);
-
-        //     return retVal;
-        // }
     }
 
     function scoresheetsList() {
         return (
-            churches.map((church) => 
-                <Tab.Pane key={church.churchNumber} eventKey={church.churchNumber}>
-                    <h4>{church.name}</h4>
-                    <div className="table-horiz-scroll">
-                        <table className="table table-striped table-bordered table-sm">
-                            <thead className="thead-light">
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Title</th>
-                                    <th>Criterias</th>
-                                    <th>Pct. (%)</th>
-                                    <th>Score</th>
-                                    <th>Overall</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {getScoresheet(church)}
-                            </tbody>
-                        </table>
-                    </div>
-                </Tab.Pane>
-            )
-        );
-    }
+            churches.map((church) => {
+                let tbl = { rows: [], cols: []};
 
-    function tblLegend() {
-        return (
-            <>
-            <h6>LEGEND</h6>
-            <table className="legend-table">
-                <thead>
-                    <tr>
-                        <th className="legend-th">Number</th>
-                        <th className="legend-th">Church</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {churches.map((church) => (
-                        <tr>
-                            <td align="center" className="legend-td">{church.churchNumber}</td>
-                            <td className="legend-td">{church.name}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            <br />
-            </>
+                tbl.cols.push({ type: 'Type', title: 'Title', criterias: 'Criterias', pct: 'Pct. (%)', score: 'Score', total: 'Total', overall: 'Overall', overallTotal: 'Overall Overall' });
+                tbl.rows = getScoresheet(church);
+
+                return (
+                    <Tab.Pane key={church.churchNumber} eventKey={church.churchNumber}>
+                        <div className="row">
+                            <div className="col-md-10">
+                                <h4>{church.name}</h4>
+                            </div>
+                            <div className="col-md-2 btnExport">
+                                <ExportCSV csvData={tbl.rows} sheetName={judge.firstName[0] + '_' + judge.lastName} fileName={`${church.name}_Scoresheet.xlsx`} />
+                            </div>
+                            <div className="table-horiz-scroll">
+                                <ScoresheetTbl rows={ tbl.rows } cols={ tbl.cols } />
+                            </div>
+                        </div>
+                    </Tab.Pane>
+                )
+            })
         );
     }
 
