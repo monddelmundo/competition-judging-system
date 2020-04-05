@@ -9,6 +9,7 @@
     "@fortawesome/react-fontawesome": "^0.1.8",
     "@material-ui/core": "^4.9.7",
     "@material-ui/icons": "^4.9.1",
+    "@progress/kendo-react-excel-export": "^3.12.0",
     "@reach/alert-dialog": "^0.9.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.1",
@@ -19,6 +20,8 @@
     "dotenv": "^8.2.0",
     "event-emitter": "^0.3.5",
     "express-session": "^1.17.0",
+    "file-save": "^0.2.0",
+    "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",
     "js-cookie": "^2.2.1",
     "jsonwebtoken": "^8.5.1",
@@ -29,10 +32,12 @@
     "react-datepicker": "^2.13.0",
     "react-dom": "^16.12.0",
     "react-icons": "^3.9.0",
+    "react-json-table": "^0.1.1",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0",
-    "styled-components": "^5.0.1"
+    "styled-components": "^5.0.1",
+    "xlsx": "^0.15.6"
   },
   "scripts": {
     "start": "react-scripts start",
