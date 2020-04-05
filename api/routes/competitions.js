@@ -7,6 +7,15 @@ router.route('/').get((req, res) => {
       .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/scoresheet/:id').get((req, res) => {
+    Competition.find({ event_id: req.params.id })
+        .select('_id event_id name type criterias')
+        .exec(function(err, churches) {
+            (err) ? res.status(400).json('Error ' + err)
+            : res.json(churches)
+        });
+});
+
 router.route('/:id').get((req, res) => {
     Competition.findById(req.params.id) 
       .then(competitions => res.json(competitions))

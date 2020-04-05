@@ -85,7 +85,7 @@ export default function Criterias(props) {
         let totals = 0;
         if(criterias) {
             criterias.map(criteria => {
-                totals += parseInt(criteria.value);
+                totals += parseFloat(criteria.value);
             })
         }
         return totals;
