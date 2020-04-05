@@ -13,12 +13,10 @@
 }
 
 .table-horiz-scroll {
-    width: 100%;
     overflow-x:auto;
  }
 
  .table-horiz-scroll > table {
-    width: 150%;
     height: 100%;
   }
 

@@ -21,7 +21,7 @@ const Judge = props => {
             <td>{props.judge.accessCode}</td>
             <td>{props.judge.status}</td>
             <td>
-                <Link to={{ pathname: "/scoresheets", state: { judge: props.judge }}}>
+                <Link to={{ pathname: "/scoresheets", state: { judge: props.judge, event: props.selectedEvent }}}>
                     <FontAwesomeIcon icon={faEye} fixedWidth />&nbsp;Scoresheets
                 </Link> 
                 &nbsp; | &nbsp;
@@ -101,7 +101,7 @@ export default function Judges(props) {
 
     function judgeList() {
         return judges.map(function(currJudge) {
-            return <Judge judge={currJudge} deleteJudge={deleteJudge} key={currJudge._id}/>;
+            return <Judge judge={currJudge} deleteJudge={deleteJudge} key={currJudge._id} selectedEvent={selectedEvent}/>;
         })
     }
 
