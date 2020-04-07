@@ -9,6 +9,7 @@ const churchSchema = new Schema({
     },
     name: { type: String, required: true, trim: true },
     churchNumber: { type: Number },
+    acronym: { type: String, required: true, trim: true },
     participants: { type: [{
         competition_id: {
             type: mongoose.Schema.Types.ObjectId,
