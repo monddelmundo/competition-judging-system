@@ -16,6 +16,13 @@
     overflow-x:auto;
     height: 550px;
     margin-bottom: 30px;
+    overflow: auto;
+ }
+
+ th { 
+    position: sticky;
+    top: 0;
+    background: white;
  }
 
  .table-horiz-scroll > table {

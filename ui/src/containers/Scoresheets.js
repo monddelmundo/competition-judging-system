@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Scoresheets.css';
-import { FormGroup, FormControl, Button, Tab, Nav, Row, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { faTrash, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Tab, Nav, Row, Col } from 'react-bootstrap';
 import AlertDialog, { showDialog } from '../components/Dialogs/Dialog';
 import { notify } from '../components/Notifications/Notification';
 import { ScoresheetTbl } from '../components/ScoreTable';
@@ -46,7 +43,7 @@ export default function Scoresheets(props) {
         return (
             churches.map((church) => 
                 <Nav.Item key={church.churchNumber}>
-                    <Nav.Link className="tab-nav-link" eventKey={church.churchNumber}>{`${church.churchNumber}`}</Nav.Link>
+                    <Nav.Link className="tab-nav-link" eventKey={church.churchNumber}>{`${church.acronym}`}</Nav.Link>
                 </Nav.Item>
             )
         );
@@ -66,41 +63,8 @@ export default function Scoresheets(props) {
         return Math.round((number + 0.00001) * 100) / 100;
     }
 
-    function toCol(competition, entry) {
-        return (
-            <>
-                <tr>
-                    <td></td>
-                    <td>{competition.name}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                {
-                    competition.criterias.map((criteria, criteriaIndex) => (
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>{criteria.title}</td>
-                                <td>{criteria.value}</td>
-                                <td>{entry ? (entry.criterias ? entry.criterias[criteriaIndex] : 0) : 0}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                    ))
-                }
-            </>
-        )
-    }
-
     function getScoresheet(church) {
         const scoresheet = judge.scoresheets.filter(s => s.church_id === church._id)[0];
-        //let musical = [ <tr><td>Musical</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr> ];
-        //let literary = [ <tr><td>Literary</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr> ];
         let musical = [{ type: 'Musical', title: '', criterias: '', pct: '', score: '', total: '', overall: '', overallTotal: '' }];
         let literary = [{ type: 'Literary', title: '', criterias: '', pct: '', score: '', total: '', overall: '', overallTotal: '' }];
         let retVal = [];
@@ -183,19 +147,18 @@ export default function Scoresheets(props) {
             <AlertDialog />
             <div className="lander">
                 <br />
-                <h3>Scoresheet(s)</h3>
-                <br />
                 <Tab.Container id="left-tabs" defaultActiveKey="1" className="tab-container">
                     <Row>
-                        <Col md={{ span: 11, order: 2 }}>
+                        <Col md={{ span: 10, order: 2 }}>
                             <Tab.Content>
                                 {scoresheetsList()}
                             </Tab.Content>
                         </Col>
-                        <Col md={{ span: 1, order: 1 }}>
+                        <Col md={{ span: 2, order: 1 }}>
                             <Nav variant="pills" className="flex-column">
                                 {tabHeading()}
                             </Nav>
+                            <br />
                         </Col>
                     </Row>
                 </Tab.Container>

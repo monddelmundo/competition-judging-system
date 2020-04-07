@@ -9,7 +9,7 @@ router.route('/').get((req, res) => {
 
 router.route('/getIDNumberName/').get((req, res) => {
     Church.find()
-        .select('_id churchNumber name')
+        .select('_id churchNumber name acronym')
         .exec(function(err, churches) {
             (err) ? res.status(400).json('Error ' + err)
             : res.json(churches)
@@ -32,12 +32,14 @@ router.route('/add').post((req, res) => {
     const event_id = req.body.event_id;
     const name = req.body.name;
     const churchNumber = req.body.churchNumber;
+    const acronym = req.body.acronym;
     const participants = req.body.participants;
 
     const newChurch = new Church ({
         event_id,
         name,
         churchNumber,
+        acronym,
         participants
     });
 
@@ -52,6 +54,7 @@ router.route('/update/:id').post((req, res) => {
             churches.event_id = req.body.event_id;
             churches.name = req.body.name;
             churches.churchNumber = req.body.churchNumber;
+            churches.acronym = req.body.acronym;
             churches.participants = req.body.participants
 
             churches.save()
