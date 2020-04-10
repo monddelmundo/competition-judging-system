@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import "./Events.css";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import {
-  faTrash,
-  faEdit,
-  faEye,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
+import { getEventsApi, deleteEventApi } from "../../api/eventApi";
 
 const Event = (props) => (
   <tr>
@@ -46,7 +41,8 @@ export default function Events(props) {
 
   async function onLoad() {
     //console.log(props.decodedUser);
-    axios.get("http://localhost:5000/events/").then((res) => {
+    //axios.get("http://localhost:5000/events/")
+    getEventsApi().then((res) => {
       setEvents(res.data);
     });
   }
@@ -68,9 +64,9 @@ export default function Events(props) {
       res
         .then((proceed) => {
           if (proceed) {
-            axios
-              .delete("http://localhost:5000/events/" + id)
-              .then((res) => console.log(res.data));
+            //axios
+            //  .delete("http://localhost:5000/events/" + id)
+            deleteEventApi(id).then((res) => console.log(res.data));
 
             setEvents(events.filter((el) => el._id !== id));
 

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Scoresheets.css";
 import { Tab, Nav, Row, Col } from "react-bootstrap";
-import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
-import { notify } from "../../components/notifications/Notification";
+import AlertDialog from "../../components/dialogs/Dialog";
 import { ScoresheetTbl } from "../../components/ScoreTable";
 import { ExportCSV } from "../../components/ExportCSV";
 
@@ -11,8 +10,6 @@ export default function Scoresheets(props) {
   const [judge, setJudge] = useState("");
   const [churches, setChurches] = useState([]);
   const [competitions, setCompetitions] = useState([]);
-  const [selectedChurch, setSelectedChurch] = useState("");
-  const [cols, updateCols] = useState([]);
 
   useEffect(() => {
     onLoad();
@@ -117,7 +114,7 @@ export default function Scoresheets(props) {
 
         if (scoresheet) {
           entry = scoresheet.musical.find(
-            (entry) => entry.competition_id == competition._id
+            (entry) => entry.competition_id === competition._id
           );
         }
 
@@ -147,6 +144,8 @@ export default function Scoresheets(props) {
             overall: "",
             overallTotal: "",
           });
+
+          return;
         });
 
         musical.push({
@@ -165,6 +164,7 @@ export default function Scoresheets(props) {
           overall: "",
           overallTotal: "",
         });
+        return;
       });
 
     musical.push({
@@ -189,7 +189,7 @@ export default function Scoresheets(props) {
 
         if (scoresheet) {
           entry = scoresheet.literary.find(
-            (entry) => entry.competition_id == competition._id
+            (entry) => entry.competition_id === competition._id
           );
         }
 
