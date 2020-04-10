@@ -6,7 +6,7 @@ import { faTrash, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
-import { getEventsApi, deleteEventApi } from "../../api/eventApi";
+import { getEventsApi, deleteEventApi } from "../../api/EventApi";
 
 const Event = (props) => (
   <tr>

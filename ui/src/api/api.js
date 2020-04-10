@@ -1,5 +1,5 @@
 import axios from "axios";
-import { handleResponse, handleError } from "./apiUtils";
+import { handleResponse, handleError } from "./ApiUtils";
 
 const baseUrl = process.env.REACT_APP_DEV_API_URL + "/api/";
 

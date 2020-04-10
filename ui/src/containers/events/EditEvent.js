@@ -6,7 +6,7 @@ import LoaderButton from "../../components/LoaderButton";
 import "react-datepicker/dist/react-datepicker.css";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
-import { getEventApi, updateEventApi } from "../../api/eventApi";
+import { getEventApi, updateEventApi } from "../../api/EventApi";
 
 export default function EditEvent(props) {
   const [isLoading, setIsLoading] = useState(false);
