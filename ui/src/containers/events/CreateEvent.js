@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
-import { createEventApi } from "../../api/eventApi";
+import { createEventApi } from "../../api/EventApi";
 
 export default function CreateEvent(props) {
   const [fields, handleFieldChange] = useFormFields({
