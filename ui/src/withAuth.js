@@ -1,35 +1,37 @@
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
-import axios from 'axios';
-import Auth from './Auth';
+import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
+import axios from "axios";
+import Auth from "./Auth";
+import { checkTokenApi } from "./api/api";
 
 export default function withAuth(ComponentToProtect) {
   return class extends Component {
     constructor() {
       super();
       this.state = {
-        browser: '',
-        ipAddress: '',
+        browser: "",
+        ipAddress: "",
         loading: true,
         redirect: false,
-        status: 0
+        status: 0,
       };
     }
 
     componentDidMount() {
-      if(!Auth.isUserAuthenticated())
+      if (!Auth.isUserAuthenticated())
         this.setState({ loading: false, redirect: true, status: 401 });
 
       axios.defaults.withCredentials = true;
-      axios.get('http://localhost:5000/api/checkToken', { 
-        method: 'GET'
-      })
-        .then(res => {
+      //axios
+      //  .get("http://localhost:5000/api/checkToken", {
+      //    method: "GET",
+      //  })
+      checkTokenApi()
+        .then((res) => {
           if (res.status === 200) {
-            
-            const { detect } = require('detect-browser');
+            const { detect } = require("detect-browser");
             const browser = detect();
-            
+
             // handle the case where we don't detect the browser
             if (browser) {
               this.state.browser = browser.name;
@@ -56,9 +58,13 @@ export default function withAuth(ComponentToProtect) {
             throw error;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
-          this.setState({ loading: false, redirect: true, status: err.response.status });
+          this.setState({
+            loading: false,
+            redirect: true,
+            status: err.response.status,
+          });
         });
     }
 
@@ -70,10 +76,10 @@ export default function withAuth(ComponentToProtect) {
       if (redirect) {
         Auth.deauthenticateUser();
         this.props.userHasAuthenticated(false);
-        return <Redirect to="/login" />
+        return <Redirect to="/login" />;
       }
       //console.log(this.props.decodedUser);
       return <ComponentToProtect {...this.props} />;
     }
-  }
+  };
 }

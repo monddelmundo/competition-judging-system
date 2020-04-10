@@ -4,9 +4,9 @@ import LoaderButton from "../../components/LoaderButton";
 import { useFormFields } from "../../libs/hooksLib";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
-import axios from "axios";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
+import { createEventApi } from "../../api/eventApi";
 
 export default function CreateEvent(props) {
   const [fields, handleFieldChange] = useFormFields({
@@ -22,8 +22,8 @@ export default function CreateEvent(props) {
   function validateForm() {
     return (
       fields.title.length > 0 &&
-      fields.category != "" &&
-      fields.participants != "" &&
+      fields.category !== "" &&
+      fields.participants !== "" &&
       fields.location.length > 0
     );
   }
@@ -49,8 +49,9 @@ export default function CreateEvent(props) {
               status: "inpr",
             };
 
-            axios
-              .post("http://localhost:5000/events/add", newEvent)
+            //axios
+            //  .post("http://localhost:5000/events/add", newEvent)
+            createEventApi(newEvent)
               .then((res) => {
                 notify(`New event was added successfully!`, "success");
                 console.log(res.data);

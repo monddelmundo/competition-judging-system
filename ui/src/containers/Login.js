@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { FormGroup, FormControl, FormLabel } from "react-bootstrap";
 import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
-import axios from "axios";
 import Auth from "../Auth";
 import { notify } from "../components/notifications/Notification";
+import { authenticateApi } from "../api/api";
 
 export default function Login(props) {
   const [isLoading, setIsLoading] = useState(false);
@@ -51,10 +51,11 @@ export default function Login(props) {
       browser: currBrowser,
     };
 
-    axios
-      .post("http://localhost:5000/api/authenticate", newInfo, {
-        timeout: 5000,
-      })
+    //axios
+    //  .post("http://localhost:5000/api/authenticate", newInfo, {
+    //    timeout: 5000,
+    //  })
+    authenticateApi(newInfo)
       .then((res) => {
         if (res.status === 200) {
           Auth.authenticateUser(res.data);

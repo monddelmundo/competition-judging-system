@@ -6,6 +6,7 @@ import LoaderButton from "../../components/LoaderButton";
 import "react-datepicker/dist/react-datepicker.css";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
+import { getEventApi, updateEventApi } from "../../api/eventApi";
 
 export default function EditEvent(props) {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,8 +23,9 @@ export default function EditEvent(props) {
   }, []);
 
   async function onLoad() {
-    axios
-      .get("http://localhost:5000/events/" + props.match.params.id)
+    // axios
+    //   .get("http://localhost:5000/events/" + props.match.params.id)
+    getEventApi(props.match.params.id)
       .then((res) => {
         setTitle(res.data.title);
         setCategory(res.data.category);
@@ -85,11 +87,12 @@ export default function EditEvent(props) {
               accessCode: accessCode,
             };
 
-            axios
-              .post(
-                "http://localhost:5000/events/update/" + props.match.params.id,
-                updatedEvent
-              )
+            // axios
+            //   .post(
+            //     "http://localhost:5000/events/update/" + props.match.params.id,
+            //     updatedEvent
+            //   )
+            updateEventApi(props.match.params.id, updatedEvent)
               .then((res) => {
                 notify(`Event was updated successfully!`, "success");
                 console.log(res.data);
