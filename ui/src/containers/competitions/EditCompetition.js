@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { FormGroup, FormControl, FormLabel } from "react-bootstrap";
 import LoaderButton from "../../components/LoaderButton";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
+import {
+  getCompetitionApi,
+  updateCompetitionApi,
+} from "../../api/CompetitionApi";
 
 export default function EditCompetition(props) {
   const [eventID, setEventID] = useState("");
@@ -19,8 +22,9 @@ export default function EditCompetition(props) {
   }, []);
 
   async function onLoad() {
-    await axios
-      .get("http://localhost:5000/competitions/" + props.match.params.id)
+    //await axios
+    //  .get("http://localhost:5000/competitions/" + props.match.params.id)
+    getCompetitionApi(props.match.params.id)
       .then((res) => {
         setEventID(res.data.event_id);
         setName(res.data.name);
@@ -71,12 +75,13 @@ export default function EditCompetition(props) {
               maxNoOfPerson: maxNoOfPerson,
             };
 
-            axios
-              .post(
-                "http://localhost:5000/competitions/update/" +
-                  props.match.params.id,
-                updatedCompetition
-              )
+            // axios
+            //   .post(
+            //     "http://localhost:5000/competitions/update/" +
+            //       props.match.params.id,
+            //     updatedCompetition
+            //   )
+            updateCompetitionApi(props.match.params.id, updatedCompetition)
               .then((res) => {
                 notify(`Competition was updated successfully!`, "success");
                 console.log(res.data);

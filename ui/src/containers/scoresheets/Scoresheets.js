@@ -5,6 +5,8 @@ import { Tab, Nav, Row, Col } from "react-bootstrap";
 import AlertDialog from "../../components/dialogs/Dialog";
 import { ScoresheetTbl } from "../../components/ScoreTable";
 import { ExportCSV } from "../../components/ExportCSV";
+import { getChurchIDNumberNameApi } from "../../api/ChurchApi";
+import { getScoresheetsApi } from "../../api/CompetitionApi";
 
 export default function Scoresheets(props) {
   const [judge, setJudge] = useState("");
@@ -18,34 +20,34 @@ export default function Scoresheets(props) {
   async function onLoad() {
     await setJudge(props.location.state.judge);
 
-    await axios
-      .get("http://localhost:5000/churches/getIDNumberName")
-      .then((res) => {
-        if (res.data.length > 0) {
-          //sorts title of events in reverse to get latest event
-          setChurches(
-            res.data.sort((a, b) =>
-              a.churchNumber > b.churchNumber
-                ? 1
-                : b.churchNumber > a.churchNumber
-                ? -1
-                : 0
-            )
-          );
-        }
-      });
+    // await axios
+    //   .get("http://localhost:5000/churches/getIDNumberName")
+    await getChurchIDNumberNameApi().then((res) => {
+      if (res.data.length > 0) {
+        //sorts title of events in reverse to get latest event
+        setChurches(
+          res.data.sort((a, b) =>
+            a.churchNumber > b.churchNumber
+              ? 1
+              : b.churchNumber > a.churchNumber
+              ? -1
+              : 0
+          )
+        );
+      }
+    });
 
-    await axios
-      .get(
-        "http://localhost:5000/competitions/scoresheet/" +
-          props.location.state.event
-      )
-      .then((res) => {
-        if (res.data.length > 0) {
-          //sorts title of events in reverse to get latest event
-          setCompetitions(res.data);
-        }
-      });
+    // await axios
+    //   .get(
+    //     "http://localhost:5000/competitions/scoresheet/" +
+    //       props.location.state.event
+    //   )
+    await getScoresheetsApi(props.location.state.event).then((res) => {
+      if (res.data.length > 0) {
+        //sorts title of events in reverse to get latest event
+        setCompetitions(res.data);
+      }
+    });
   }
 
   function tabHeading() {

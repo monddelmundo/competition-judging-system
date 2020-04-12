@@ -5,6 +5,7 @@ import { useFormFields } from "../../libs/hooksLib";
 import axios from "axios";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
+import { createCriteriaApi } from "../../api/CompetitionApi";
 
 export default function CreateCriteria(props) {
   const [competition, setCompetition] = useState("");
@@ -34,13 +35,14 @@ export default function CreateCriteria(props) {
           if (proceed) {
             setIsLoading(true);
 
-            axios
-              .post(
-                "http://localhost:5000/competitions/" +
-                  props.location.state.competition._id +
-                  "/add",
-                fields
-              )
+            // axios
+            //   .post(
+            //     "http://localhost:5000/competitions/" +
+            //       props.location.state.competition._id +
+            //       "/add",
+            //     fields
+            //   )
+            createCriteriaApi(props.location.state.competition._id, fields)
               .then((res) => {
                 notify(`New criteria was added successfully!`, "success");
 
