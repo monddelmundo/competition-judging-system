@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
 import Auth from "./Auth";
-import { checkTokenApi } from "./api/api";
+import { checkTokenApi } from "./api/Api";
 
 export default function withAuth(ComponentToProtect) {
   return class extends Component {

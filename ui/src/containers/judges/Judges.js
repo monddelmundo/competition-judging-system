@@ -11,6 +11,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
+import { getEventsApi } from "../../api/EventApi";
+import { getJudgesEventApi, deleteJudgeApi } from "../../api/JudgeApi";
 
 const Judge = (props) => {
   const name =
@@ -64,7 +66,8 @@ export default function Judges(props) {
   async function onLoad() {
     let defaultID = "";
 
-    await axios.get("http://localhost:5000/events").then((res) => {
+    //await axios.get("http://localhost:5000/events")
+    await getEventsApi().then((res) => {
       if (res.data.length > 0) {
         //sorts title of events in reverse to get latest event
         setEvents(
@@ -77,16 +80,16 @@ export default function Judges(props) {
       }
     });
 
-    await axios
-      .get("http://localhost:5000/judges/event_id/" + defaultID)
-      .then((res) => {
-        if (res.data.length > 0) {
-          setJudges(res.data);
-          toDisplay(true);
-        } else {
-          toDisplay(false);
-        }
-      });
+    // await axios
+    //   .get("http://localhost:5000/judges/event_id/" + defaultID)
+    await getJudgesEventApi(defaultID).then((res) => {
+      if (res.data.length > 0) {
+        setJudges(res.data);
+        toDisplay(true);
+      } else {
+        toDisplay(false);
+      }
+    });
   }
 
   function onChangeSelectedEvent(e) {
@@ -95,16 +98,16 @@ export default function Judges(props) {
 
   function handleViewBtn() {
     setJudges([]);
-    axios
-      .get("http://localhost:5000/judges/event_id/" + selectedEvent)
-      .then((res) => {
-        if (res.data.length > 0) {
-          setJudges(res.data);
-          toDisplay(true);
-        } else {
-          toDisplay(false);
-        }
-      });
+    // axios
+    //   .get("http://localhost:5000/judges/event_id/" + selectedEvent)
+    getJudgesEventApi(selectedEvent).then((res) => {
+      if (res.data.length > 0) {
+        setJudges(res.data);
+        toDisplay(true);
+      } else {
+        toDisplay(false);
+      }
+    });
   }
 
   function displayAddButton() {
@@ -144,9 +147,9 @@ export default function Judges(props) {
       res
         .then((proceed) => {
           if (proceed) {
-            axios
-              .delete("http://localhost:5000/judges/" + id)
-              .then((res) => console.log(res.data));
+            // axios
+            //   .delete("http://localhost:5000/judges/" + id)
+            deleteJudgeApi(id).then((res) => console.log(res.data));
             setJudges(judges.filter((jl) => jl._id !== id));
 
             notify("Judge was deleted successfully!", "success");

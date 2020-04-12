@@ -4,7 +4,7 @@ import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import Auth from "../Auth";
 import { notify } from "../components/notifications/Notification";
-import { authenticateApi } from "../api/api";
+import { authenticateApi } from "../api/Api";
 
 export default function Login(props) {
   const [isLoading, setIsLoading] = useState(false);

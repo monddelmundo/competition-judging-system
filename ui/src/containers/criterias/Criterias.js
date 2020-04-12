@@ -7,6 +7,7 @@ import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
 import { faTrash, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { deleteCriteriaApi } from "../../api/CompetitionApi";
 
 const Criteria = (props) => (
   <tr>
@@ -51,13 +52,14 @@ export default function Criterias(props) {
       res
         .then((proceed) => {
           if (proceed) {
-            axios
-              .delete(
-                "http://localhost:5000/competitions/" +
-                  competition._id +
-                  "/delete/" +
-                  id
-              )
+            // axios
+            //   .delete(
+            //     "http://localhost:5000/competitions/" +
+            //       competition._id +
+            //       "/delete/" +
+            //       id
+            //   )
+            deleteCriteriaApi(competition._id, id)
               .then((res) => {
                 console.log(res.data);
                 let comp = competition;

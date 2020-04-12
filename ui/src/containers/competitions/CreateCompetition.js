@@ -5,6 +5,7 @@ import { useFormFields } from "../../libs/hooksLib";
 import axios from "axios";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
+import { createCompetitionApi } from "../../api/CompetitionApi";
 
 export default function CreateCompetition(props) {
   const [isLoading, setIsLoading] = useState("");
@@ -49,8 +50,9 @@ export default function CreateCompetition(props) {
               maxNoOfPerson: fields.maxNoOfPerson,
             };
 
-            axios
-              .post("http://localhost:5000/competitions/add", newCompetition)
+            //axios
+            //  .post("http://localhost:5000/competitions/add", newCompetition)
+            createCompetitionApi(newCompetition)
               .then((res) => {
                 notify(`New competition was added successfully!`, "success");
 

@@ -4,6 +4,7 @@ import axios from "axios";
 import LoaderButton from "../../components/LoaderButton";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
+import { updateCriteriaApi, getCriteriaApi } from "../../api/CompetitionApi";
 
 export default function EditCriteria(props) {
   const [competition, setCompetition] = useState("");
@@ -17,13 +18,14 @@ export default function EditCriteria(props) {
 
   function onLoad() {
     setCompetition(props.location.state.competition);
-    axios
-      .get(
-        "http://localhost:5000/competitions/" +
-          props.location.state.competition._id +
-          "/criteria_id/" +
-          props.match.params.id
-      )
+    // axios
+    //   .get(
+    //     "http://localhost:5000/competitions/" +
+    //       props.location.state.competition._id +
+    //       "/criteria_id/" +
+    //       props.match.params.id
+    //   )
+    getCriteriaApi(props.location.state.competition._id, props.match.params.id)
       .then((res) => {
         setTitle(res.data.title);
         setValue(parseInt(res.data.value));
@@ -63,19 +65,24 @@ export default function EditCriteria(props) {
           if (proceed) {
             setIsLoading(true);
 
-            const updateCriteria = {
+            const updatedCriteria = {
               title: title,
               value: value,
             };
 
-            axios
-              .post(
-                "http://localhost:5000/competitions/" +
-                  competition._id +
-                  "/update/" +
-                  props.match.params.id,
-                updateCriteria
-              )
+            // axios
+            //   .post(
+            //     "http://localhost:5000/competitions/" +
+            //       competition._id +
+            //       "/update/" +
+            //       props.match.params.id,
+            //     updatedCriteria
+            //   )
+            updateCriteriaApi(
+              competition._id,
+              props.match.params.id,
+              updatedCriteria
+            )
               .then((res) => {
                 notify(`Criteria was updated successfully!`, "success");
 

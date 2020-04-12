@@ -12,6 +12,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
+import { getEventsApi } from "../../api/EventApi";
+import {
+  getCompetitionsEventApi,
+  deleteCompetitionApi,
+} from "../../api/CompetitionApi";
 
 const Competition = (props) => (
   <tr>
@@ -59,7 +64,8 @@ export default function Competitions(props) {
   async function onLoad() {
     let defaultID = "";
 
-    await axios.get("http://localhost:5000/events").then((res) => {
+    //await axios.get("http://localhost:5000/events").then((res) => {
+    await getEventsApi().then((res) => {
       if (res.data.length > 0) {
         //sorts title of events in reverse to get latest event
         setEvents(
@@ -72,20 +78,20 @@ export default function Competitions(props) {
       }
     });
 
-    await axios
-      .get("http://localhost:5000/competitions/event_id/" + defaultID)
-      .then((res) => {
-        if (res.data.length > 0) {
-          setCompetitions(
-            res.data.sort((a, b) =>
-              a.name > b.name ? -1 : b.name > a.name ? 1 : 0
-            )
-          );
-          toDisplay(true);
-        } else {
-          toDisplay(false);
-        }
-      });
+    //await axios
+    //  .get("http://localhost:5000/competitions/event_id/" + defaultID)
+    getCompetitionsEventApi(defaultID).then((res) => {
+      if (res.data.length > 0) {
+        setCompetitions(
+          res.data.sort((a, b) =>
+            a.name > b.name ? -1 : b.name > a.name ? 1 : 0
+          )
+        );
+        toDisplay(true);
+      } else {
+        toDisplay(false);
+      }
+    });
   }
 
   function onChangeSelectedEvent(e) {
@@ -94,16 +100,20 @@ export default function Competitions(props) {
 
   function handleViewBtn() {
     setCompetitions([]);
-    axios
-      .get("http://localhost:5000/competitions/event_id/" + selectedEvent)
-      .then((res) => {
-        if (res.data.length > 0) {
-          setCompetitions(res.data);
-          toDisplay(true);
-        } else {
-          toDisplay(false);
-        }
-      });
+    //axios
+    //  .get("http://localhost:5000/competitions/event_id/" + selectedEvent)
+    getCompetitionsEventApi(selectedEvent).then((res) => {
+      if (res.data.length > 0) {
+        setCompetitions(
+          res.data.sort((a, b) =>
+            a.name > b.name ? -1 : b.name > a.name ? 1 : 0
+          )
+        );
+        toDisplay(true);
+      } else {
+        toDisplay(false);
+      }
+    });
   }
 
   function displayAddButton() {
@@ -142,9 +152,9 @@ export default function Competitions(props) {
       res
         .then((proceed) => {
           if (proceed) {
-            axios
-              .delete("http://localhost:5000/competitions/" + id)
-              .then((res) => console.log(res.data));
+            //axios
+            //  .delete("http://localhost:5000/competitions/" + id)
+            deleteCompetitionApi(id).then((res) => console.log(res.data));
 
             setCompetitions(competitions.filter((el) => el._id !== id));
 
