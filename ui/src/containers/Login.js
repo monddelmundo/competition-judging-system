@@ -33,6 +33,10 @@ export default function Login(props) {
       setCurrBrowser(browser.name);
     }
     setIPAddress(await publicIp.v4());
+    /*Being used for Testing*/
+    /*--START--
+    await dispatch({ type: "SAMPLE_ACTION", users });
+    --END--*/
   }
 
   function validateForm() {
