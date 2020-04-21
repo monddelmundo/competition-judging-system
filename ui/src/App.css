@@ -4,4 +4,19 @@
 
 .App .navbar-brand {
   font-weight: bold;
+  padding-left: 10px;
+}
+
+.App .Nav_Link {
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.6rem;
+  text-decoration: none;
+  padding-right: 10px;
+  padding-left: 10px;
+  font-weight: 600;
+}
+
+.App .Nav_Link:hover {
+  color: gainsboro;
 }

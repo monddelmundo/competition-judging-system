@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { FormGroup, FormControl, FormLabel } from "react-bootstrap";
-import axios from "axios";
 import DatePicker from "react-datepicker";
 import LoaderButton from "../../components/LoaderButton";
 import "react-datepicker/dist/react-datepicker.css";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
-import { notify } from "../../components/notifications/Notification";
-import { getEventApi, updateEventApi } from "../../api/EventApi";
+import { toast } from "react-toastify";
+import { store } from "../../context/Store";
+import {
+  loadEventsAction,
+  editEventAction,
+} from "../../context/actions/EventActions";
+import Spinner from "../../components/Spinner";
 
 export default function EditEvent(props) {
   const [isLoading, setIsLoading] = useState(false);
@@ -17,27 +21,40 @@ export default function EditEvent(props) {
   const [dateOfEvent, setDateOfEvent] = useState(new Date());
   const [status, setStatus] = useState("");
   const [accessCode, setAccessCode] = useState("");
+  const [isApiInProgress, setIsApiInProgress] = useState(true);
+  const { state, dispatch } = useContext(store);
 
   useEffect(() => {
     onLoad();
-  }, []);
+  }, [state.events]);
 
   async function onLoad() {
     // axios
     //   .get("http://localhost:5000/events/" + props.match.params.id)
-    getEventApi(props.match.params.id)
-      .then((res) => {
-        setTitle(res.data.title);
-        setCategory(res.data.category);
-        setDateOfEvent(new Date(res.data.dateOfEvent));
-        setLocation(res.data.location);
-        setParticipants(res.data.participants);
-        setStatus(res.data.status);
-        setAccessCode(res.data.accessCode);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    try {
+      if (state.events.length === 0) {
+        await loadEventsAction(dispatch);
+      }
+    } catch (err) {
+      toast.error("Loading events failed. " + err.message);
+      throw err;
+    }
+
+    if (state.events.length > 0) {
+      const event = getEventById(props.match.params.id);
+      setTitle(event.title);
+      setCategory(event.category);
+      setDateOfEvent(new Date(event.dateOfEvent));
+      setLocation(event.location);
+      setParticipants(event.participants);
+      setStatus(event.status);
+      setAccessCode(event.accessCode);
+    }
+    setIsApiInProgress(state.apiCallsInProgress > 0);
+  }
+
+  function getEventById(id) {
+    return state.events.find((event) => event._id === props.match.params.id);
   }
 
   function validateForm() {
@@ -78,13 +95,13 @@ export default function EditEvent(props) {
             setIsLoading(true);
 
             const updatedEvent = {
-              title: title,
-              category: category,
-              dateOfEvent: dateOfEvent,
-              location: location,
-              participants: participants,
-              status: status,
-              accessCode: accessCode,
+              title,
+              category,
+              dateOfEvent,
+              location,
+              participants,
+              status,
+              accessCode,
             };
 
             // axios
@@ -92,23 +109,23 @@ export default function EditEvent(props) {
             //     "http://localhost:5000/events/update/" + props.match.params.id,
             //     updatedEvent
             //   )
-            updateEventApi(props.match.params.id, updatedEvent)
-              .then((res) => {
-                notify(`Event was updated successfully!`, "success");
-                console.log(res.data);
+            //updateEventApi(props.match.params.id, updatedEvent)
+            editEventAction(dispatch, props.match.params.id, updatedEvent)
+              .then(() => {
+                toast.success(`Event was updated successfully!`);
                 props.history.push("/events");
                 //window.location.reload();
               })
               .catch((err) => {
                 setIsLoading(false);
                 console.error(err);
-                notify("Error updating this event.", "error");
+                toast.success("Error updating this event. " + err.message);
               });
           } else throw new Error("Error");
         })
         .catch((err) => {
           console.error(err);
-          notify("Unexpected error!", "error");
+          toast.success("Unexpected error! " + err.message);
         });
     });
   }
@@ -116,65 +133,75 @@ export default function EditEvent(props) {
   return (
     <div className="edit-event container">
       <AlertDialog />
-      <h3>Edit Event</h3>
-      <form onSubmit={handleSubmit}>
-        <FormGroup controlId="title">
-          <FormLabel>Title</FormLabel>
-          <FormControl
-            autoFocus
-            type="text"
-            value={title}
-            onChange={onChangeTitle}
-          />
-        </FormGroup>
-        <FormGroup controlId="category">
-          <FormLabel>Category</FormLabel>
-          <FormControl as="select" value={category} onChange={onChangeCategory}>
-            <option value="regional">Regional</option>
-            <option value="national">National</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup controlId="dateOfEvent">
-          <FormLabel>Date of Event</FormLabel>
-          <br />
-          <DatePicker
-            selected={dateOfEvent}
-            onChange={(newDate) => setDateOfEvent(newDate)}
-          />
-        </FormGroup>
-        <FormGroup controlId="location">
-          <FormLabel>Location</FormLabel>
-          <FormControl
-            type="text"
-            value={location}
-            onChange={onChangeLocation}
-          />
-        </FormGroup>
-        <FormGroup controlId="participants">
-          <FormLabel>Participants</FormLabel>
-          <FormControl
-            as="select"
-            value={participants}
-            onChange={onChangeParticipants}
-          >
-            <option value="youth">Youth</option>
-            <option value="adult">Adult</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup controlId="loaderBtn">
-          <LoaderButton
-            block
-            type="submit"
-            isLoading={isLoading}
-            disabled={!validateForm()}
-          >
-            Update
+      {isApiInProgress ? (
+        <Spinner />
+      ) : (
+        <>
+          <h3>Edit Event</h3>
+          <form onSubmit={handleSubmit}>
+            <FormGroup controlId="title">
+              <FormLabel>Title</FormLabel>
+              <FormControl
+                autoFocus
+                type="text"
+                value={title}
+                onChange={onChangeTitle}
+              />
+            </FormGroup>
+            <FormGroup controlId="category">
+              <FormLabel>Category</FormLabel>
+              <FormControl
+                as="select"
+                value={category}
+                onChange={onChangeCategory}
+              >
+                <option value="regional">Regional</option>
+                <option value="national">National</option>
+              </FormControl>
+            </FormGroup>
+            <FormGroup controlId="dateOfEvent">
+              <FormLabel>Date of Event</FormLabel>
+              <br />
+              <DatePicker
+                selected={dateOfEvent}
+                onChange={(newDate) => setDateOfEvent(newDate)}
+              />
+            </FormGroup>
+            <FormGroup controlId="location">
+              <FormLabel>Location</FormLabel>
+              <FormControl
+                type="text"
+                value={location}
+                onChange={onChangeLocation}
+              />
+            </FormGroup>
+            <FormGroup controlId="participants">
+              <FormLabel>Participants</FormLabel>
+              <FormControl
+                as="select"
+                value={participants}
+                onChange={onChangeParticipants}
+              >
+                <option value="youth">Youth</option>
+                <option value="adult">Adult</option>
+              </FormControl>
+            </FormGroup>
+            <FormGroup controlId="loaderBtn">
+              <LoaderButton
+                block
+                type="submit"
+                isLoading={isLoading}
+                disabled={!validateForm()}
+              >
+                Update
+              </LoaderButton>
+            </FormGroup>
+          </form>
+          <LoaderButton block onClick={handleCancel}>
+            Cancel
           </LoaderButton>
-        </FormGroup>
-      </form>
-      <LoaderButton block onClick={handleCancel}>
-        Cancel
-      </LoaderButton>
+        </>
+      )}
     </div>
   );
 }

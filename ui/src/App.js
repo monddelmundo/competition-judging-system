@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, withRouter } from "react-router-dom";
+import { NavLink, withRouter } from "react-router-dom";
 import "./App.css";
 import Routes from "./Routes";
 import Auth from "./Auth";
@@ -39,24 +39,36 @@ function App(props) {
     <div className="App container">
       <Notifications />
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-        <Navbar.Brand href="/">Adjudicator</Navbar.Brand>
+        <NavLink className="navbar-brand" to="/">
+          Adjudicator
+        </NavLink>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
         {isAuthenticated ? (
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <Nav.Link href="/events">Events</Nav.Link>
-              <Nav.Link href="/competitions">Competitions</Nav.Link>
-              <Nav.Link href="/judges">Judges</Nav.Link>
+              <NavLink className="Nav_Link" to="/events">
+                Events
+              </NavLink>
+              <NavLink className="Nav_Link" to="/competitions">
+                Competitions
+              </NavLink>
+              <NavLink className="Nav_Link" to="/judges">
+                Judges
+              </NavLink>
             </Nav>
             <Nav className="ml-auto">
-              <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+              <NavLink className="Nav_Link" to="" onClick={handleLogout}>
+                Logout
+              </NavLink>
             </Nav>
           </Navbar.Collapse>
         ) : (
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
-              <Nav.Link href="/login">Login</Nav.Link>
+              <NavLink className="Nav_Link" to="/login">
+                Login
+              </NavLink>
             </Nav>
           </Navbar.Collapse>
         )}

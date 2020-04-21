@@ -5,14 +5,13 @@ import { Button } from "react-bootstrap";
 import { faTrash, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
-import { notify } from "../../components/notifications/Notification";
-import { getEventsApi, deleteEventApi } from "../../api/EventApi";
 import { store } from "../../context/Store";
 import {
   loadEventsAction,
   deleteEventAction,
 } from "../../context/actions/EventActions";
 import { toast } from "react-toastify";
+import Spinner from "../../components/Spinner";
 
 const Event = (props) => (
   <tr>
@@ -39,6 +38,7 @@ const Event = (props) => (
 );
 
 export default function Events(props) {
+  const [isApiInProgress, setIsApiInProgress] = useState(true);
   const { state, dispatch } = useContext(store);
   //const [events, setEvents] = useState(globalState.state.events);
 
@@ -48,23 +48,20 @@ export default function Events(props) {
 
   async function onLoad() {
     //console.log(props.decodedUser);
-    //axios.get("http://localhost:5000/events/")
-    //getEventsApi().then((res) => {
-    //  setEvents(res.data);
-    //dispatch({ type: "SET_EVENTS_ACTION", events: res.data });
-    //});
 
     try {
       if (state.events.length === 0) {
         await loadEventsAction(dispatch);
       }
     } catch (err) {
+      toast.error("Loading events failed. " + err.message);
       throw err;
     }
+
+    setIsApiInProgress(state.apiCallsInProgress > 0);
   }
 
   function eventList() {
-    //console.log(globalState.state.events);
     if (state.events.length > 0) {
       return state.events.map((currEvent) => {
         return (
@@ -109,31 +106,38 @@ export default function Events(props) {
   return (
     <div className="events container">
       <AlertDialog />
-      <div className="lander">
-        <br />
-        <h3>List of Event(s)</h3>
-        <table className="table">
-          <thead className="thead-light">
-            <tr>
-              <th>Title</th>
-              <th>Category</th>
-              <th>Location</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>{eventList()}</tbody>
-        </table>
-      </div>
-      <div className="lander">
-        <Button
-          variant="light"
-          size="lg"
-          onClick={() => props.history.push("/events/add")}
-        >
-          <FontAwesomeIcon icon={faPlus} /> Event
-        </Button>
-      </div>
+      {!isApiInProgress ? (
+        <>
+          <div className="lander">
+            <br />
+
+            <h3>List of Event(s)</h3>
+            <table className="table">
+              <thead className="thead-light">
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>{eventList()}</tbody>
+            </table>
+          </div>
+          <div className="lander">
+            <Button
+              variant="light"
+              size="lg"
+              onClick={() => props.history.push("/events/add")}
+            >
+              <FontAwesomeIcon icon={faPlus} /> Event
+            </Button>
+          </div>
+        </>
+      ) : (
+        <Spinner />
+      )}
     </div>
   );
 }
