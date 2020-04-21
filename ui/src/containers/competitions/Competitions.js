@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useContext } from "react";
 import "./Competitions.css";
 import { Link } from "react-router-dom";
 import { Button, FormGroup, FormControl } from "react-bootstrap";
@@ -11,12 +10,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
-import { notify } from "../../components/notifications/Notification";
-import { getEventsApi } from "../../api/EventApi";
+import { toast } from "react-toastify";
+import { store } from "../../context/Store";
+import { loadEventsAction } from "../../context/actions/EventActions";
 import {
-  getCompetitionsEventApi,
-  deleteCompetitionApi,
-} from "../../api/CompetitionApi";
+  loadCompetitionsAction,
+  deleteCompetitionAction,
+} from "../../context/actions/CompetitionActions";
+import Spinner from "../../components/Spinner";
 
 const Competition = (props) => (
   <tr>
@@ -56,42 +57,59 @@ export default function Competitions(props) {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState("");
   const [display, toDisplay] = useState(false);
+  const { state, dispatch } = useContext(store);
+  const [isApiInProgress, setIsApiInProgress] = useState(true);
 
   useEffect(() => {
     onLoad();
-  }, []);
+  }, [state.events, state.competitions]);
 
   async function onLoad() {
     let defaultID = "";
 
-    //await axios.get("http://localhost:5000/events").then((res) => {
-    await getEventsApi().then((res) => {
-      if (res.data.length > 0) {
-        //sorts title of events in reverse to get latest event
-        setEvents(
-          res.data.sort((a, b) =>
-            a.title > b.title ? -1 : b.title > a.title ? 1 : 0
-          )
-        );
-        setSelectedEvent(res.data[0]._id);
-        defaultID = res.data[0]._id;
+    try {
+      if (state.events.length === 0) {
+        await loadEventsAction(dispatch);
       }
-    });
+      if (state.competitions.length === 0) {
+        await loadCompetitionsAction(dispatch);
+      }
+    } catch (err) {
+      toast.error("Loading failed. " + err.message);
+      throw err;
+    }
 
-    //await axios
-    //  .get("http://localhost:5000/competitions/event_id/" + defaultID)
-    getCompetitionsEventApi(defaultID).then((res) => {
-      if (res.data.length > 0) {
+    if (state.events.length > 0) {
+      setEvents(
+        state.events.sort((a, b) =>
+          a.title > b.title ? -1 : b.title > a.title ? 1 : 0
+        )
+      );
+
+      setSelectedEvent(state.events[0]._id);
+      defaultID = state.events[0]._id;
+
+      if (
+        state.competitions.length > 0 &&
+        getCompetitionsById(defaultID).length > 0
+      ) {
         setCompetitions(
-          res.data.sort((a, b) =>
-            a.name > b.name ? -1 : b.name > a.name ? 1 : 0
+          getCompetitionsById(defaultID).sort((a, b) =>
+            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
           )
         );
+
         toDisplay(true);
-      } else {
-        toDisplay(false);
       }
-    });
+    }
+
+    setIsApiInProgress(state.apiCallsInProgress > 0);
+  }
+
+  function getCompetitionsById(id) {
+    return state.competitions.filter(
+      (competition) => competition.event_id == id
+    );
   }
 
   function onChangeSelectedEvent(e) {
@@ -100,20 +118,18 @@ export default function Competitions(props) {
 
   function handleViewBtn() {
     setCompetitions([]);
-    //axios
-    //  .get("http://localhost:5000/competitions/event_id/" + selectedEvent)
-    getCompetitionsEventApi(selectedEvent).then((res) => {
-      if (res.data.length > 0) {
-        setCompetitions(
-          res.data.sort((a, b) =>
-            a.name > b.name ? -1 : b.name > a.name ? 1 : 0
-          )
-        );
-        toDisplay(true);
-      } else {
-        toDisplay(false);
-      }
-    });
+
+    if (
+      state.competitions.length > 0 &&
+      getCompetitionsById(selectedEvent).length > 0
+    ) {
+      setCompetitions(
+        getCompetitionsById(selectedEvent).sort((a, b) =>
+          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+        )
+      );
+      toDisplay(true);
+    } else toDisplay(false);
   }
 
   function displayAddButton() {
@@ -152,25 +168,20 @@ export default function Competitions(props) {
       res
         .then((proceed) => {
           if (proceed) {
+            toast.success("Competition was deleted successfully!");
             //axios
             //  .delete("http://localhost:5000/competitions/" + id)
-            deleteCompetitionApi(id).then((res) => console.log(res.data));
+            //deleteCompetitionApi(id).then((res) => console.log(res.data));
+            deleteCompetitionAction(dispatch, id);
 
-            setCompetitions(competitions.filter((el) => el._id !== id));
-
-            notify("Competition was deleted successfully!", "success");
+            //setCompetitions(competitions.filter((el) => el._id !== id));
           } else throw new Error("Error");
         })
         .catch((err) => {
           console.error(err);
-          notify("Error Deleting this data!", "error");
+          toast.error("Error Deleting this data!");
         });
     });
-    //axios.delete('http://localhost:5000/competitions/'+id)
-    //  .then(res => console.log(res.data));
-
-    //removes the deleted exercise from the state events' array
-    //_id came from mongodb's object name
   }
 
   function displayCompetitions() {
@@ -187,62 +198,64 @@ export default function Competitions(props) {
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
-            {competitionList().sort((a, b) => (a.name > b.name ? 1 : -1))}
-          </tbody>
+          <tbody>{competitionList()}</tbody>
         </table>
         {displayAddButton()}
       </div>
     );
   }
 
-  //function showDialog() {
-  //    openDialog(true);
-  //}
-
   return (
     <div className="competitions container">
       <AlertDialog />
-      {events.length > 0 ? (
-        <div className="lander">
-          <div>
-            <FormGroup>
-              <br />
-              <h5>Choose Event</h5>
-              <FormControl
-                autoFocus
-                as="select"
-                value={selectedEvent}
-                onChange={onChangeSelectedEvent}
-              >
-                {events.map(function (event) {
-                  return (
-                    <option key={event._id} value={event._id}>
-                      {event.title}
-                    </option>
-                  );
-                })}
-              </FormControl>
-              <br />
-              <button className="btn btn-dark" onClick={handleViewBtn}>
-                View
-              </button>
-            </FormGroup>
-          </div>
-          {display ? (
-            displayCompetitions()
+      {isApiInProgress ? (
+        <Spinner />
+      ) : (
+        <>
+          {events.length > 0 ? (
+            <div className="lander">
+              <div>
+                <FormGroup>
+                  <br />
+                  <h5>Choose Event</h5>
+                  <FormControl
+                    autoFocus
+                    as="select"
+                    value={selectedEvent}
+                    onChange={onChangeSelectedEvent}
+                  >
+                    {events.map(function (event) {
+                      return (
+                        <option key={event._id} value={event._id}>
+                          {event.title}
+                        </option>
+                      );
+                    })}
+                  </FormControl>
+                  <br />
+                  <button className="btn btn-dark" onClick={handleViewBtn}>
+                    View
+                  </button>
+                </FormGroup>
+              </div>
+              {display ? (
+                displayCompetitions()
+              ) : (
+                <div>
+                  <h3>Nothing to display!</h3>
+                  {displayAddButton()}
+                </div>
+              )}
+            </div>
           ) : (
             <div>
-              <h3>Nothing to display!</h3>
-              {displayAddButton()}
+              <br />
+              <h3>
+                There is no Event as of the moment! Please create one first.
+              </h3>
             </div>
           )}
-        </div>
-      ) : (
-        <div>
-          <br />
-          <h3>There is no Event as of the moment! Please create one first.</h3>
-        </div>
+        </>
       )}
     </div>
   );
