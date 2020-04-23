@@ -47,8 +47,6 @@ export default function Events(props) {
   }, [state.events]);
 
   async function onLoad() {
-    //console.log(props.decodedUser);
-
     try {
       if (state.events.length === 0) {
         await loadEventsAction(dispatch);
@@ -111,7 +109,7 @@ export default function Events(props) {
           <div className="lander">
             <br />
 
-            <h3>List of Event(s)</h3>
+            <h5>List of Event(s)</h5>
             <table className="table">
               <thead className="thead-light">
                 <tr>

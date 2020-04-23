@@ -30,7 +30,9 @@ export default function CreateCompetition(props) {
 
   async function onLoad() {
     if (!props.location.state) {
-      toast.warn("Please choose an event first...");
+      toast.warn(
+        "Please choose an event first before creating a competition..."
+      );
       props.history.push("/competitions");
       return;
     }

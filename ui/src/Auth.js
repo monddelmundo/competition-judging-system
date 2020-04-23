@@ -1,21 +1,22 @@
 class Auth {
+  static authenticateUser(token) {
+    localStorage.setItem("user", token);
+  }
 
-    static authenticateUser(token) {
-        localStorage.setItem('user', token)
-    }
+  static isUserAuthenticated() {
+    return localStorage.getItem("user") !== null;
+  }
 
-    static isUserAuthenticated() {
-        return localStorage.getItem('user') !== null
-    }
+  static deauthenticateUser() {
+    //localStorage.removeItem("user");
+    //localStorage.removeItem("context");
+    localStorage.clear();
+  }
 
-    static deauthenticateUser() {
-        localStorage.removeItem('user')
-    }
-
-    static getToken() {
-        return localStorage.getItem('user')
-    }
-    /*
+  static getToken() {
+    return localStorage.getItem("user");
+  }
+  /*
     static authHeader() {
         let user = JSON.parse(localStorage.getItem('user'));
 
@@ -28,4 +29,4 @@ class Auth {
     */
 }
 
-export default Auth
+export default Auth;
