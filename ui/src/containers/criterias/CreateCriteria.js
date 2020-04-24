@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FormGroup, FormControl, FormLabel } from "react-bootstrap";
 import LoaderButton from "../../components/LoaderButton";
 import { useFormFields } from "../../libs/hooksLib";
-import axios from "axios";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
-import { notify } from "../../components/notifications/Notification";
-import { createCriteriaApi } from "../../api/CompetitionApi";
+import { toast } from "react-toastify";
+import { store } from "../../context/Store";
+import { addCriteriaAction } from "../../context/actions/CompetitionActions";
 
 export default function CreateCriteria(props) {
   const [competition, setCompetition] = useState("");
@@ -14,6 +14,7 @@ export default function CreateCriteria(props) {
     title: "",
     value: 0,
   });
+  const { state, dispatch } = useContext(store);
 
   useEffect(() => {
     onLoad();
@@ -42,9 +43,14 @@ export default function CreateCriteria(props) {
             //       "/add",
             //     fields
             //   )
-            createCriteriaApi(props.location.state.competition._id, fields)
+            //createCriteriaApi(props.location.state.competition._id, fields)
+            addCriteriaAction(
+              dispatch,
+              props.location.state.competition._id,
+              fields
+            )
               .then((res) => {
-                notify(`New criteria was added successfully!`, "success");
+                toast.success(`New criteria was added successfully!`);
 
                 props.history.push({
                   pathname: "/criterias",
@@ -56,13 +62,13 @@ export default function CreateCriteria(props) {
               .catch((err) => {
                 setIsLoading(false);
                 console.error(err);
-                notify("Error adding this criteria.", "error");
+                toast.error("Error adding this criteria.");
               });
           } else throw new Error("Error");
         })
         .catch((err) => {
-          console.error(err);
-          notify("Unexpected error!", "error");
+          console.log(err);
+          toast.error("Unexpected error!");
         });
     });
   }

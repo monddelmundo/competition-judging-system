@@ -1,39 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FormGroup, FormControl, FormLabel } from "react-bootstrap";
-import axios from "axios";
 import LoaderButton from "../../components/LoaderButton";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import { notify } from "../../components/notifications/Notification";
 import { updateCriteriaApi, getCriteriaApi } from "../../api/CompetitionApi";
+import { toast } from "react-toastify";
+import { store } from "../../context/Store";
+import {
+  loadCompetitionsAction,
+  editCriteriaAction,
+} from "../../context/actions/CompetitionActions";
 
 export default function EditCriteria(props) {
   const [competition, setCompetition] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [value, setValue] = useState(0);
+  const { state, dispatch } = useContext(store);
 
   useEffect(() => {
     onLoad();
   }, []);
 
   function onLoad() {
-    setCompetition(props.location.state.competition);
-    // axios
-    //   .get(
-    //     "http://localhost:5000/competitions/" +
-    //       props.location.state.competition._id +
-    //       "/criteria_id/" +
-    //       props.match.params.id
-    //   )
-    getCriteriaApi(props.location.state.competition._id, props.match.params.id)
-      .then((res) => {
-        setTitle(res.data.title);
-        setValue(parseInt(res.data.value));
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    //console.log(fields.title);
+    try {
+      const localCompetition = props.location.state.competition;
+      const criteria = getCriteriaById(localCompetition, props.match.params.id);
+      setCompetition(localCompetition);
+
+      setTitle(criteria.title);
+      setValue(parseInt(criteria.value));
+    } catch (err) {
+      toast.error("Loading failed. " + err.message);
+      throw err;
+    }
+  }
+
+  function getCriteriaById(localCompetition, id) {
+    return localCompetition.criterias.find((criteria) => criteria._id === id);
   }
 
   function validateForm() {
@@ -69,22 +73,14 @@ export default function EditCriteria(props) {
               title: title,
               value: value,
             };
-
-            // axios
-            //   .post(
-            //     "http://localhost:5000/competitions/" +
-            //       competition._id +
-            //       "/update/" +
-            //       props.match.params.id,
-            //     updatedCriteria
-            //   )
-            updateCriteriaApi(
+            editCriteriaAction(
+              dispatch,
               competition._id,
               props.match.params.id,
               updatedCriteria
             )
               .then((res) => {
-                notify(`Criteria was updated successfully!`, "success");
+                toast.success(`Criteria was updated successfully!`);
 
                 props.history.push({
                   pathname: "/criterias",
@@ -96,13 +92,13 @@ export default function EditCriteria(props) {
               .catch((err) => {
                 setIsLoading(false);
                 console.error(err);
-                notify("Error updating this criteria.", "error");
+                toast.error("Error updating this criteria.");
               });
           } else throw new Error("Error");
         })
         .catch((err) => {
           console.error(err);
-          notify("Unexpected error!", "error");
+          toast.error("Unexpected error!");
         });
     });
   }
@@ -110,7 +106,8 @@ export default function EditCriteria(props) {
   return (
     <div className="edit-criteria container">
       <AlertDialog />
-      <h3>Edit Criteria</h3>
+      <br />
+      <h5>Edit Criteria</h5>
       <form onSubmit={handleSubmit}>
         <FormGroup controlId="title">
           <FormLabel>Title</FormLabel>
