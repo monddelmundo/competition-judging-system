@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import "./Criterias.css";
 import { Button } from "react-bootstrap";
@@ -8,6 +8,9 @@ import { notify } from "../../components/notifications/Notification";
 import { faTrash, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { deleteCriteriaApi } from "../../api/CompetitionApi";
+import { toast } from "react-toastify";
+import { store } from "../../context/Store";
+import { deleteCriteriaAction } from "../../context/actions/CompetitionActions";
 
 const Criteria = (props) => (
   <tr>
@@ -38,6 +41,7 @@ const Criteria = (props) => (
 export default function Criterias(props) {
   //<Link to={"/criterias/"+props.criteria._id}>Edit</Link> | <a href="#" onClick={() => { props.deleteCriteria(props.criteria._id) }}>Delete</a>
   const [competition, setCompetition] = useState("");
+  const { state, dispatch } = useContext(store);
 
   useEffect(() => {
     onLoad();
@@ -45,6 +49,7 @@ export default function Criterias(props) {
 
   function onLoad() {
     setCompetition(props.location.state.competition);
+    console.log("state:", state);
   }
 
   function deleteCriteria(id) {
@@ -52,21 +57,13 @@ export default function Criterias(props) {
       res
         .then((proceed) => {
           if (proceed) {
-            // axios
-            //   .delete(
-            //     "http://localhost:5000/competitions/" +
-            //       competition._id +
-            //       "/delete/" +
-            //       id
-            //   )
-            deleteCriteriaApi(competition._id, id)
-              .then((res) => {
-                console.log(res.data);
+            toast.success("Criteria was deleted successfully!");
+
+            //deleteCriteriaApi(competition._id, id)
+            deleteCriteriaAction(dispatch, competition._id, id)
+              .then(() => {
                 let comp = competition;
-
                 comp.criterias = comp.criterias.filter((cl) => cl._id !== id);
-                notify("Criteria was deleted successfully!", "success");
-
                 props.history.push({
                   pathname: "/criterias",
                   state: {
@@ -75,14 +72,12 @@ export default function Criterias(props) {
                 });
               })
               .catch((err) => {
-                console.error(err);
-                notify("Error Deleting this data!", "error");
+                toast.error("Error Deleting this data! " + err.message);
               });
           } else throw new Error("Error");
         })
         .catch((err) => {
-          console.error(err);
-          notify("Error Deleting this data!", "error");
+          toast.error("Error Deleting this data! " + err.message);
         });
     });
   }
@@ -119,7 +114,7 @@ export default function Criterias(props) {
       <AlertDialog />
       <div className="lander">
         <br />
-        <h3>List of Criteria(s) for {competition.name}</h3>
+        <h5>List of Criteria(s) for {competition.name}</h5>
         <table className="table">
           <thead className="thead-light">
             <tr>
