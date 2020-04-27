@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FormGroup, FormControl, Button } from "react-bootstrap";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import {
   faTrash,
@@ -10,9 +9,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
-import { notify } from "../../components/notifications/Notification";
-import { getEventsApi } from "../../api/EventApi";
-import { getJudgesEventApi, deleteJudgeApi } from "../../api/JudgeApi";
+import SelectEvent from "../../components/SelectEvent";
+import { toast } from "react-toastify";
+import { store } from "../../context/Store";
+import { loadEventsAction } from "../../context/actions/EventActions";
+import {
+  loadJudgesAction,
+  deleteJudgeAction,
+} from "../../context/actions/JudgeActions";
+import Spinner from "../../components/Spinner";
 
 const Judge = (props) => {
   const name =
@@ -42,6 +47,7 @@ const Judge = (props) => {
         &nbsp; |
         <Button
           variant="link"
+          href="#"
           onClick={() => {
             props.deleteJudge(props.judge._id);
           }}
@@ -58,38 +64,54 @@ export default function Judges(props) {
   const [judges, setJudges] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState("");
   const [display, toDisplay] = useState(false);
+  const [isApiInProgress, setIsApiInProgress] = useState(true);
+  const { state, dispatch } = useContext(store);
 
   useEffect(() => {
     onLoad();
-  }, []);
+  }, [state.events, state.judges]);
 
   async function onLoad() {
     let defaultID = "";
 
-    //await axios.get("http://localhost:5000/events")
-    await getEventsApi().then((res) => {
-      if (res.data.length > 0) {
-        //sorts title of events in reverse to get latest event
-        setEvents(
-          res.data.sort((a, b) =>
-            a.title > b.title ? -1 : b.title > a.title ? 1 : 0
+    try {
+      if (state.events.length === 0) {
+        await loadEventsAction(dispatch);
+      }
+      if (state.judges.length === 0) {
+        await loadJudgesAction(dispatch);
+      }
+    } catch (err) {
+      toast.error("Loading failed. " + err.message);
+      throw err;
+    }
+
+    if (state.events.length > 0) {
+      setEvents(
+        state.events.sort((a, b) =>
+          a.title > b.title ? -1 : b.title > a.title ? 1 : 0
+        )
+      );
+
+      setSelectedEvent(state.events[0]._id);
+      defaultID = state.events[0]._id;
+
+      if (state.judges.length > 0 && getJudgeById(defaultID).length > 0) {
+        setJudges(
+          getJudgeById(defaultID).sort((a, b) =>
+            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
           )
         );
-        setSelectedEvent(res.data[0]._id);
-        defaultID = res.data[0]._id;
-      }
-    });
 
-    // await axios
-    //   .get("http://localhost:5000/judges/event_id/" + defaultID)
-    await getJudgesEventApi(defaultID).then((res) => {
-      if (res.data.length > 0) {
-        setJudges(res.data);
         toDisplay(true);
-      } else {
-        toDisplay(false);
       }
-    });
+    }
+
+    setIsApiInProgress(state.apiCallsInProgress > 0);
+  }
+
+  function getJudgeById(id) {
+    return state.judges.filter((judge) => judge.event_id == id);
   }
 
   function onChangeSelectedEvent(e) {
@@ -98,16 +120,15 @@ export default function Judges(props) {
 
   function handleViewBtn() {
     setJudges([]);
-    // axios
-    //   .get("http://localhost:5000/judges/event_id/" + selectedEvent)
-    getJudgesEventApi(selectedEvent).then((res) => {
-      if (res.data.length > 0) {
-        setJudges(res.data);
-        toDisplay(true);
-      } else {
-        toDisplay(false);
-      }
-    });
+
+    if (state.judges.length > 0 && getJudgeById(selectedEvent).length > 0) {
+      setJudges(
+        getJudgeById(selectedEvent).sort((a, b) =>
+          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+        )
+      );
+      toDisplay(true);
+    } else toDisplay(false);
   }
 
   function displayAddButton() {
@@ -147,17 +168,18 @@ export default function Judges(props) {
       res
         .then((proceed) => {
           if (proceed) {
-            // axios
-            //   .delete("http://localhost:5000/judges/" + id)
-            deleteJudgeApi(id).then((res) => console.log(res.data));
-            setJudges(judges.filter((jl) => jl._id !== id));
-
-            notify("Judge was deleted successfully!", "success");
+            toast.success("Judge was deleted successfully!");
+            deleteJudgeAction(dispatch, id).catch((err) => {
+              console.error(err);
+              toast.error("Error Deleting this data! " + err.message);
+            });
+            //deleteJudgeApi(id).then((res) => console.log(res.data));
+            //setJudges(judges.filter((jl) => jl._id !== id));
           } else throw new Error("Error");
         })
         .catch((err) => {
           console.error(err);
-          notify("Error Deleting this data!", "error");
+          toast.error("Error Deleting this data!");
         });
     });
   }
@@ -187,46 +209,44 @@ export default function Judges(props) {
   return (
     <div className="judges container">
       <AlertDialog />
-      {events.length > 0 ? (
-        <div className="lander">
-          <div>
-            <FormGroup>
-              <br />
-              <h5>Choose Event</h5>
-              <FormControl
-                autoFocus
-                as="select"
-                value={selectedEvent}
-                onChange={onChangeSelectedEvent}
-              >
-                {events.map(function (event) {
-                  return (
-                    <option key={event._id} value={event._id}>
-                      {event.title}
-                    </option>
-                  );
-                })}
-              </FormControl>
-              <br />
-              <button className="btn btn-dark" onClick={handleViewBtn}>
-                View
-              </button>
-            </FormGroup>
-          </div>
-          {display ? (
-            displayJudges()
+      {isApiInProgress ? (
+        <Spinner />
+      ) : (
+        <>
+          {events.length > 0 ? (
+            <div className="lander">
+              <div>
+                <FormGroup>
+                  <br />
+                  <SelectEvent
+                    events={events}
+                    selectedEvent={selectedEvent}
+                    onChangeSelectedEvent={onChangeSelectedEvent}
+                  />
+                  <br />
+                  <button className="btn btn-dark" onClick={handleViewBtn}>
+                    View
+                  </button>
+                </FormGroup>
+              </div>
+              {display ? (
+                displayJudges()
+              ) : (
+                <div>
+                  <h3>Nothing to display!</h3>
+                  {displayAddButton()}
+                </div>
+              )}
+            </div>
           ) : (
             <div>
-              <h3>Nothing to display!</h3>
-              {displayAddButton()}
+              <br />
+              <h3>
+                There is no Event as of the moment! Please create one first.
+              </h3>
             </div>
           )}
-        </div>
-      ) : (
-        <div>
-          <br />
-          <h3>There is no Event as of the moment! Please create one first.</h3>
-        </div>
+        </>
       )}
     </div>
   );

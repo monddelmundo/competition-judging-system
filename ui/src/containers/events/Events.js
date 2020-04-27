@@ -82,7 +82,10 @@ export default function Events(props) {
             //axios
             //  .delete("http://localhost:5000/events/" + id)
             //deleteEventApi(id).then((res) => console.log(res.data));
-            deleteEventAction(dispatch, id);
+            deleteEventAction(dispatch, id).catch((err) => {
+              console.error(err);
+              toast.error("Error Deleting this data! " + err.message);
+            });
 
             //setEvents(events.filter((el) => el._id !== id));
             //notify("Event was deleted successfully!", "success");
