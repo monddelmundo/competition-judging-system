@@ -10,6 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
+import SelectEvent from "../../components/SelectEvent";
 import { toast } from "react-toastify";
 import { store } from "../../context/Store";
 import { loadEventsAction } from "../../context/actions/EventActions";
@@ -91,10 +92,10 @@ export default function Competitions(props) {
 
       if (
         state.competitions.length > 0 &&
-        getCompetitionsById(defaultID).length > 0
+        getCompetitionById(defaultID).length > 0
       ) {
         setCompetitions(
-          getCompetitionsById(defaultID).sort((a, b) =>
+          getCompetitionById(defaultID).sort((a, b) =>
             a.name > b.name ? 1 : b.name > a.name ? -1 : 0
           )
         );
@@ -106,7 +107,7 @@ export default function Competitions(props) {
     setIsApiInProgress(state.apiCallsInProgress > 0);
   }
 
-  function getCompetitionsById(id) {
+  function getCompetitionById(id) {
     return state.competitions.filter(
       (competition) => competition.event_id == id
     );
@@ -121,10 +122,10 @@ export default function Competitions(props) {
 
     if (
       state.competitions.length > 0 &&
-      getCompetitionsById(selectedEvent).length > 0
+      getCompetitionById(selectedEvent).length > 0
     ) {
       setCompetitions(
-        getCompetitionsById(selectedEvent).sort((a, b) =>
+        getCompetitionById(selectedEvent).sort((a, b) =>
           a.name > b.name ? 1 : b.name > a.name ? -1 : 0
         )
       );
@@ -172,7 +173,10 @@ export default function Competitions(props) {
             //axios
             //  .delete("http://localhost:5000/competitions/" + id)
             //deleteCompetitionApi(id).then((res) => console.log(res.data));
-            deleteCompetitionAction(dispatch, id);
+            deleteCompetitionAction(dispatch, id).catch((err) => {
+              console.error(err);
+              toast.error("Error Deleting this data! " + err.message);
+            });
 
             //setCompetitions(competitions.filter((el) => el._id !== id));
           } else throw new Error("Error");
@@ -217,21 +221,11 @@ export default function Competitions(props) {
               <div>
                 <FormGroup>
                   <br />
-                  <h5>Choose Event</h5>
-                  <FormControl
-                    autoFocus
-                    as="select"
-                    value={selectedEvent}
-                    onChange={onChangeSelectedEvent}
-                  >
-                    {events.map(function (event) {
-                      return (
-                        <option key={event._id} value={event._id}>
-                          {event.title}
-                        </option>
-                      );
-                    })}
-                  </FormControl>
+                  <SelectEvent
+                    events={events}
+                    selectedEvent={selectedEvent}
+                    onChangeSelectedEvent={onChangeSelectedEvent}
+                  />
                   <br />
                   <button className="btn btn-dark" onClick={handleViewBtn}>
                     View

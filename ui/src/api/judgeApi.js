@@ -22,6 +22,7 @@ export function getJudgesEventApi(id) {
 }
 
 export function deleteJudgeApi(id) {
+  console.log(id);
   return axios
     .delete(baseUrl + id)
     .then(handleResponse)

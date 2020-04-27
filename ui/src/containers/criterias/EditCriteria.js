@@ -2,21 +2,16 @@ import React, { useState, useEffect, useContext } from "react";
 import { FormGroup, FormControl, FormLabel } from "react-bootstrap";
 import LoaderButton from "../../components/LoaderButton";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
-import { notify } from "../../components/notifications/Notification";
-import { updateCriteriaApi, getCriteriaApi } from "../../api/CompetitionApi";
 import { toast } from "react-toastify";
 import { store } from "../../context/Store";
-import {
-  loadCompetitionsAction,
-  editCriteriaAction,
-} from "../../context/actions/CompetitionActions";
+import { editCriteriaAction } from "../../context/actions/CompetitionActions";
 
 export default function EditCriteria(props) {
   const [competition, setCompetition] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [value, setValue] = useState(0);
-  const { state, dispatch } = useContext(store);
+  const { dispatch } = useContext(store);
 
   useEffect(() => {
     onLoad();
