@@ -13,6 +13,7 @@ import Criterias from "./containers/criterias/Criterias";
 import CreateCriteria from "./containers/criterias/CreateCriteria";
 import EditCriteria from "./containers/criterias/EditCriteria";
 import Judges from "./containers/judges/Judges";
+import JudgeForm from "./containers/judges/JudgeForm";
 import Scoresheets from "./containers/scoresheets/Scoresheets";
 import NotFound from "./containers/NotFound";
 import withAuth from "./withAuth";
@@ -80,6 +81,18 @@ export default function Routes({ appProps }) {
         path="/judges"
         exact
         component={withAuth(Judges)}
+        appProps={appProps}
+      />
+      <AppliedRoute
+        path="/judges/add"
+        exact
+        component={withAuth(JudgeForm)}
+        appProps={appProps}
+      />
+      <AppliedRoute
+        path="/judges/:id"
+        exact
+        component={withAuth(JudgeForm)}
         appProps={appProps}
       />
       <AppliedRoute

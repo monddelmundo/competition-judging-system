@@ -191,7 +191,7 @@ export default function Competitions(props) {
   function displayCompetitions() {
     return (
       <div>
-        <h3>List of Competition(s) for Selected Event</h3>
+        <h5>List of Competition(s) for Selected Event</h5>
         <table className="table">
           <thead className="thead-light">
             <tr>

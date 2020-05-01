@@ -132,7 +132,8 @@ export default function EditCompetition(props) {
         <Spinner />
       ) : (
         <>
-          <h3>Edit Competition</h3>
+          <br />
+          <h5>Edit Competition</h5>
           <form onSubmit={handleSubmit}>
             <FormGroup controlId="name">
               <FormLabel>Name</FormLabel>

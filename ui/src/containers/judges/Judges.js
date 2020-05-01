@@ -187,7 +187,7 @@ export default function Judges(props) {
   function displayJudges() {
     return (
       <div>
-        <h3>List of Judge(s) for Selected Event</h3>
+        <h5>List of Judge(s) for Selected Event</h5>
         <table className="table">
           <thead className="thead-light">
             <tr>
