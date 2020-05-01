@@ -119,13 +119,13 @@ export default function EditEvent(props) {
               .catch((err) => {
                 setIsLoading(false);
                 console.error(err);
-                toast.success("Error updating this event. " + err.message);
+                toast.error("Error updating this event. " + err.message);
               });
           } else throw new Error("Error");
         })
         .catch((err) => {
           console.error(err);
-          toast.success("Unexpected error! " + err.message);
+          toast.error("Unexpected error! " + err.message);
         });
     });
   }
@@ -137,7 +137,8 @@ export default function EditEvent(props) {
         <Spinner />
       ) : (
         <>
-          <h3>Edit Event</h3>
+          <br />
+          <h5>Edit Event</h5>
           <form onSubmit={handleSubmit}>
             <FormGroup controlId="title">
               <FormLabel>Title</FormLabel>

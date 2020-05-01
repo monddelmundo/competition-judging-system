@@ -105,7 +105,8 @@ export default function CreateEvent(props) {
         <Spinner />
       ) : (
         <>
-          <h3>Create Event</h3>
+          <br />
+          <h5>Create Event</h5>
           <form onSubmit={handleSubmit}>
             <FormGroup controlId="title">
               <FormLabel>Title</FormLabel>

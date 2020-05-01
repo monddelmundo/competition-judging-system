@@ -85,7 +85,8 @@ export default function CreateCriteria(props) {
   return (
     <div className="create-criteria container">
       <AlertDialog />
-      <h3>Create Criteria</h3>
+      <br />
+      <h5>Create Criteria</h5>
       <form onSubmit={handleSubmit}>
         <FormGroup controlId="title">
           <FormLabel>Title</FormLabel>

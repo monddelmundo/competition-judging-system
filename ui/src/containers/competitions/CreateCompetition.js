@@ -112,7 +112,8 @@ export default function CreateCompetition(props) {
         <Spinner />
       ) : (
         <>
-          <h3>Create Competition</h3>
+          <br />
+          <h5>Create Competition</h5>
           <form onSubmit={handleSubmit}>
             <FormGroup controlId="name">
               <FormLabel>Name</FormLabel>
