@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, withRouter } from "react-router-dom";
 import "./App.css";
+import "./DefaultStyles.css";
 import Routes from "./Routes";
 import Auth from "./Auth";
 import { Nav, Navbar } from "react-bootstrap";
@@ -55,6 +56,9 @@ function App(props) {
               </NavLink>
               <NavLink className="Nav_Link" to="/judges">
                 Judges
+              </NavLink>
+              <NavLink className="Nav_Link" to="/churches">
+                Churches
               </NavLink>
             </Nav>
             <Nav className="ml-auto">

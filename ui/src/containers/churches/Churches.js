@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from "react";
-import "./Competitions.css";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { faTrash, faEdit, faEye } from "@fortawesome/free-solid-svg-icons";
@@ -11,36 +10,35 @@ import { toast } from "react-toastify";
 import { store } from "../../context/Store";
 import { loadEventsAction } from "../../context/actions/EventActions";
 import {
-  loadCompetitionsAction,
-  deleteCompetitionAction,
-} from "../../context/actions/CompetitionActions";
+  loadChurchesAction,
+  deleteChurchAction,
+} from "../../context/actions/ChurchActions";
 import Spinner from "../../components/Spinner";
 
-const Competition = (props) => (
+const Church = (props) => (
   <tr>
-    <td>{props.competition.name}</td>
-    <td>{props.competition.type}</td>
-    <td>{props.competition.minNoOfPerson}</td>
-    <td>{props.competition.maxNoOfPerson}</td>
+    <td>{props.church.name}</td>
+    <td>{props.church.acronym}</td>
+    <td>{props.church.churchNumber}</td>
     <td>
       <Link
         to={{
-          pathname: "/criterias",
-          state: { competition: props.competition },
+          pathname: "/participants",
+          state: { church: props.church },
         }}
       >
         <FontAwesomeIcon icon={faEye} fixedWidth />
-        &nbsp;Criterias
+        &nbsp;Participants
       </Link>
       &nbsp; | &nbsp;
-      <Link to={"/competitions/" + props.competition._id}>
+      <Link to={"/churches/" + props.church._id}>
         <FontAwesomeIcon icon={faEdit} fixedWidth />
       </Link>
       &nbsp; |
       <Button
         variant="link"
         onClick={() => {
-          props.deleteCompetition(props.competition._id);
+          props.deleteChurch(props.church._id);
         }}
       >
         <FontAwesomeIcon icon={faTrash} fixedWidth />
@@ -49,8 +47,8 @@ const Competition = (props) => (
   </tr>
 );
 
-export default function Competitions(props) {
-  const [competitions, setCompetitions] = useState([]);
+export default function Churches(props) {
+  const [churches, setChurches] = useState([]);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState("");
   const [display, toDisplay] = useState(false);
@@ -59,7 +57,7 @@ export default function Competitions(props) {
 
   useEffect(() => {
     onLoad();
-  }, [state.competitions, state.events]);
+  }, [state.churches, state.events]);
 
   async function onLoad() {
     let defaultID = "";
@@ -68,8 +66,8 @@ export default function Competitions(props) {
       if (state.events.length === 0) {
         await loadEventsAction(dispatch);
       }
-      if (state.competitions.length === 0) {
-        await loadCompetitionsAction(dispatch);
+      if (state.churches.length === 0) {
+        await loadChurchesAction(dispatch);
       }
     } catch (err) {
       toast.error("Loading failed. " + err.message);
@@ -86,27 +84,27 @@ export default function Competitions(props) {
       setSelectedEvent(state.events[0]._id);
       defaultID = state.events[0]._id;
 
-      if (
-        state.competitions.length > 0 &&
-        getCompetitionsById(defaultID).length > 0
-      ) {
-        setCompetitions(
-          getCompetitionsById(defaultID).sort((a, b) =>
-            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+      if (state.churches.length > 0 && getChurchesById(defaultID).length > 0) {
+        setChurches(
+          getChurchesById(defaultID).sort((a, b) =>
+            a.churchNumber > b.churchNumber
+              ? 1
+              : b.churchNumber > a.churchNumber
+              ? -1
+              : 0
           )
         );
 
         toDisplay(true);
       }
+      console.log(state);
     }
 
     setIsApiInProgress(state.apiCallsInProgress > 0);
   }
 
-  function getCompetitionsById(id) {
-    return state.competitions.filter(
-      (competition) => competition.event_id == id
-    );
+  function getChurchesById(id) {
+    return state.churches.filter((church) => church.event_id == id);
   }
 
   function onChangeSelectedEvent(e) {
@@ -114,15 +112,19 @@ export default function Competitions(props) {
   }
 
   function handleViewBtn() {
-    setCompetitions([]);
+    setChurches([]);
 
     if (
-      state.competitions.length > 0 &&
-      getCompetitionsById(selectedEvent).length > 0
+      state.churches.length > 0 &&
+      getChurchesById(selectedEvent).length > 0
     ) {
-      setCompetitions(
-        getCompetitionsById(selectedEvent).sort((a, b) =>
-          a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+      setChurches(
+        getChurchesById(selectedEvent).sort((a, b) =>
+          a.churchNumber > b.churchNumber
+            ? 1
+            : b.churchNumber > a.churchNumber
+            ? -1
+            : 0
         )
       );
       toDisplay(true);
@@ -132,34 +134,21 @@ export default function Competitions(props) {
   function displayAddButton() {
     return (
       <AddButton
-        label={"Competition"}
-        pathname={"/competitions/add"}
+        label={"Church"}
+        pathname={"/churches/add"}
         state={{ eventID: selectedEvent }}
         history={props.history}
       />
     );
   }
 
-  function competitionList() {
-    return competitions.map(function (currCompetition) {
-      return (
-        <Competition
-          competition={currCompetition}
-          deleteCompetition={deleteCompetition}
-          key={currCompetition._id}
-        />
-      );
-    });
-  }
-
-  function deleteCompetition(id) {
+  function deleteChurch(id) {
     showDialog(true, "delete", (res) => {
       res
         .then((proceed) => {
           if (proceed) {
-            toast.success("Competition was deleted successfully!");
-
-            deleteCompetitionAction(dispatch, id).catch((err) => {
+            toast.success("Church data was deleted successfully!");
+            deleteChurchAction(dispatch, id).catch((err) => {
               console.error(err);
               toast.error("Error Deleting this data! " + err.message);
             });
@@ -172,21 +161,32 @@ export default function Competitions(props) {
     });
   }
 
-  function displayCompetitions() {
+  function churchList() {
+    return churches.map(function (currChurch) {
+      return (
+        <Church
+          church={currChurch}
+          deleteChurch={deleteChurch}
+          key={currChurch._id}
+        />
+      );
+    });
+  }
+
+  function displayChurches() {
     return (
       <div>
-        <h5>List of Competition(s) for Selected Event</h5>
+        <h5>List of Churches(s) for Selected Event</h5>
         <table className="table">
           <thead className="thead-light">
             <tr>
               <th>Name</th>
-              <th>Type</th>
-              <th>Min. # of Person</th>
-              <th>Max # of Person</th>
+              <th>Acronym</th>
+              <th>Church Number</th>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>{competitionList()}</tbody>
+          <tbody>{churchList()}</tbody>
         </table>
         {displayAddButton()}
       </div>
@@ -194,9 +194,9 @@ export default function Competitions(props) {
   }
 
   return (
-    <div className="competitions container">
+    <div className="churches container">
       <AlertDialog />
-      {isApiInProgress ? (
+      {isApiInProgress > 0 ? (
         <Spinner />
       ) : (
         <>
@@ -211,7 +211,7 @@ export default function Competitions(props) {
                 />
               </div>
               {display ? (
-                displayCompetitions()
+                displayChurches()
               ) : (
                 <div>
                   <h3>Nothing to display!</h3>

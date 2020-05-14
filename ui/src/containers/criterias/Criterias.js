@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
-import axios from "axios";
-import "./Criterias.css";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
-import { notify } from "../../components/notifications/Notification";
 import { faTrash, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { deleteCriteriaApi } from "../../api/CompetitionApi";
+import AddButton from "../../components/AddButton";
 import { toast } from "react-toastify";
 import { store } from "../../context/Store";
 import { deleteCriteriaAction } from "../../context/actions/CompetitionActions";
@@ -48,8 +45,13 @@ export default function Criterias(props) {
   }, []);
 
   function onLoad() {
+    if (!props.location.state && !props.match.params.id) {
+      toast.warn("Please choose a competition first before proceeding...");
+      props.history.push("/competitions");
+      return;
+    }
+
     setCompetition(props.location.state.competition);
-    console.log("state:", state);
   }
 
   function deleteCriteria(id) {
@@ -58,22 +60,18 @@ export default function Criterias(props) {
         .then((proceed) => {
           if (proceed) {
             toast.success("Criteria was deleted successfully!");
+            let comp = competition;
+            comp.criterias = comp.criterias.filter((cl) => cl._id !== id);
+            props.history.push({
+              pathname: "/criterias",
+              state: {
+                competition: comp,
+              },
+            });
 
-            //deleteCriteriaApi(competition._id, id)
-            deleteCriteriaAction(dispatch, competition._id, id)
-              .then(() => {
-                let comp = competition;
-                comp.criterias = comp.criterias.filter((cl) => cl._id !== id);
-                props.history.push({
-                  pathname: "/criterias",
-                  state: {
-                    competition: comp,
-                  },
-                });
-              })
-              .catch((err) => {
-                toast.error("Error Deleting this data! " + err.message);
-              });
+            deleteCriteriaAction(dispatch, competition._id, id).catch((err) => {
+              toast.error("Error Deleting this data! " + err.message);
+            });
           } else throw new Error("Error");
         })
         .catch((err) => {
@@ -133,20 +131,12 @@ export default function Criterias(props) {
           </tbody>
         </table>
       </div>
-      <div className="lander">
-        <Button
-          variant="light"
-          size="lg"
-          onClick={() =>
-            props.history.push({
-              pathname: "/criterias/add",
-              state: { competition: competition },
-            })
-          }
-        >
-          <FontAwesomeIcon icon={faPlus} /> Criterias
-        </Button>
-      </div>
+      <AddButton
+        label={"Criteria"}
+        pathname={"/criterias/add"}
+        state={{ competition: competition }}
+        history={props.history}
+      />
     </div>
   );
 }

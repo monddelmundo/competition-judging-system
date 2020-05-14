@@ -1,32 +1,57 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "./Scoresheets.css";
+import React, { useState, useEffect, useContext } from "react";
 import { Tab, Nav, Row, Col } from "react-bootstrap";
 import AlertDialog from "../../components/dialogs/Dialog";
 import { ScoresheetTbl } from "../../components/ScoreTable";
 import { ExportCSV } from "../../components/ExportCSV";
-import { getChurchIDNumberNameApi } from "../../api/ChurchApi";
-import { getScoresheetsApi } from "../../api/CompetitionApi";
+import { toast } from "react-toastify";
+import { store } from "../../context/Store";
+import { loadChurchesAction } from "../../context/actions/ChurchActions";
+import { loadCompetitionsAction } from "../../context/actions/CompetitionActions";
+import Spinner from "../../components/Spinner";
 
 export default function Scoresheets(props) {
   const [judge, setJudge] = useState("");
   const [churches, setChurches] = useState([]);
   const [competitions, setCompetitions] = useState([]);
+  const { state, dispatch } = useContext(store);
+  const [isApiInProgress, setIsApiInProgress] = useState(true);
 
   useEffect(() => {
     onLoad();
-  }, []);
+  }, [state.competitions, state.churches]);
 
   async function onLoad() {
     await setJudge(props.location.state.judge);
 
-    // await axios
-    //   .get("http://localhost:5000/churches/getIDNumberName")
-    await getChurchIDNumberNameApi().then((res) => {
-      if (res.data.length > 0) {
-        //sorts title of events in reverse to get latest event
+    try {
+      if (state.churches.length === 0) {
+        await loadChurchesAction(dispatch);
+      }
+      if (state.competitions.length === 0) {
+        await loadCompetitionsAction(dispatch);
+      }
+    } catch (err) {
+      toast.error("Loading failed. " + err.message);
+      throw err;
+    }
+
+    if (props.location.state.event) {
+      let eventId = props.location.state.event;
+
+      if (
+        state.competitions.length > 0 &&
+        getCompetitionsById(eventId).length > 0 &&
+        state.churches.length > 0 &&
+        getChurchesById(eventId).length > 0
+      ) {
+        setCompetitions(
+          getCompetitionsById(eventId).sort((a, b) =>
+            a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+          )
+        );
+
         setChurches(
-          res.data.sort((a, b) =>
+          getChurchesById(eventId).sort((a, b) =>
             a.churchNumber > b.churchNumber
               ? 1
               : b.churchNumber > a.churchNumber
@@ -35,19 +60,19 @@ export default function Scoresheets(props) {
           )
         );
       }
-    });
+    }
 
-    // await axios
-    //   .get(
-    //     "http://localhost:5000/competitions/scoresheet/" +
-    //       props.location.state.event
-    //   )
-    await getScoresheetsApi(props.location.state.event).then((res) => {
-      if (res.data.length > 0) {
-        //sorts title of events in reverse to get latest event
-        setCompetitions(res.data);
-      }
-    });
+    setIsApiInProgress(state.apiCallsInProgress > 0);
+  }
+
+  function getCompetitionsById(id) {
+    return state.competitions.filter(
+      (competition) => competition.event_id == id
+    );
+  }
+
+  function getChurchesById(id) {
+    return state.churches.filter((church) => church.event_id == id);
   }
 
   function tabHeading() {
@@ -291,11 +316,11 @@ export default function Scoresheets(props) {
 
       return (
         <Tab.Pane key={church.churchNumber} eventKey={church.churchNumber}>
-          <div className="row">
-            <div className="col-md-10">
+          <div>
+            <div>
               <h4>{church.name}</h4>
             </div>
-            <div className="col-md-2 btnExport">
+            <div className="btnExport">
               <ExportCSV
                 csvData={tbl.rows}
                 sheetName={judge.firstName[0] + "_" + judge.lastName}
@@ -314,26 +339,30 @@ export default function Scoresheets(props) {
   return (
     <div className="scoresheets container">
       <AlertDialog />
-      <div className="lander">
-        <br />
-        <Tab.Container
-          id="left-tabs"
-          defaultActiveKey="1"
-          className="tab-container"
-        >
-          <Row>
-            <Col md={{ span: 10, order: 2 }}>
-              <Tab.Content>{scoresheetsList()}</Tab.Content>
-            </Col>
-            <Col md={{ span: 2, order: 1 }}>
-              <Nav variant="pills" className="flex-column">
-                {tabHeading()}
-              </Nav>
-              <br />
-            </Col>
-          </Row>
-        </Tab.Container>
-      </div>
+      {isApiInProgress ? (
+        <Spinner />
+      ) : (
+        <div className="lander">
+          <br />
+          <Tab.Container
+            id="left-tabs"
+            defaultActiveKey="1"
+            className="tab-container"
+          >
+            <Row>
+              <Col md={{ span: 10, order: 2 }}>
+                <Tab.Content>{scoresheetsList()}</Tab.Content>
+              </Col>
+              <Col md={{ span: 2, order: 1 }}>
+                <Nav variant="pills" className="flex-column">
+                  {tabHeading()}
+                </Nav>
+                <br />
+              </Col>
+            </Row>
+          </Tab.Container>
+        </div>
+      )}
     </div>
   );
 }
