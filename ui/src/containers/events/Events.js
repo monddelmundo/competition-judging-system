@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
-import "./Events.css";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { faTrash, faEdit, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
+import AddButton from "../../components/AddButton";
 import { store } from "../../context/Store";
 import {
   loadEventsAction,
@@ -126,15 +126,11 @@ export default function Events(props) {
               <tbody>{eventList()}</tbody>
             </table>
           </div>
-          <div className="lander">
-            <Button
-              variant="light"
-              size="lg"
-              onClick={() => props.history.push("/events/add")}
-            >
-              <FontAwesomeIcon icon={faPlus} /> Event
-            </Button>
-          </div>
+          <AddButton
+            label={"Event"}
+            pathname={"/events/add"}
+            history={props.history}
+          />
         </>
       ) : (
         <Spinner />

@@ -19,7 +19,6 @@ export default function competitionReducer(
     case types.DELETE_COMPETITION_SUCCESS:
       return state.filter((competition) => competition._id !== action.id);
     case types.DELETE_CRITERIA_SUCCESS:
-      //return state.filter((competition) => competition._id !== action.id);
       return state.map((competition) => {
         if (competition._id === action.compId) {
           let updated = { ...competition };

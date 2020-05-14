@@ -41,3 +41,28 @@ export function updateChurchApi(id, updatedEvent) {
     .then(handleResponse)
     .catch(handleError);
 }
+
+export function createParticipantApi(id, newParticipant) {
+  return axios
+    .post(baseUrl + `${id}/add`, newParticipant)
+    .then(handleResponse)
+    .catch(handleError);
+}
+
+export function deleteParticipantApi(churchID, participantID) {
+  return axios
+    .delete(baseUrl + `${churchID}/delete/${participantID}`)
+    .then(handleResponse)
+    .catch(handleError);
+}
+
+export function updateParticipantApi(
+  churchID,
+  participantID,
+  updatedParticipant
+) {
+  return axios
+    .post(`${baseUrl}${churchID}/update/${participantID}`, updatedParticipant)
+    .then(handleResponse)
+    .catch(handleError);
+}

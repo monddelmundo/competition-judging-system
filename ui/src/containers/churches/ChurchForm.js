@@ -3,22 +3,20 @@ import { FormGroup } from "react-bootstrap";
 import LoaderButton from "../../components/LoaderButton";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import {
-  addJudgeAction,
-  editJudgeAction,
-  loadJudgesAction,
-} from "../../context/actions/JudgeActions";
+  addChurchAction,
+  editChurchAction,
+  loadChurchesAction,
+} from "../../context/actions/ChurchActions";
 import { store } from "../../context/Store";
 import { toast } from "react-toastify";
 import Spinner from "../../components/Spinner";
 import TextInput from "../../components/TextInput";
 
-export default function JudgeForm(props) {
-  const [firstName, setFirstName] = useState("");
-  const [middleInitial, setMiddleInitial] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [status, setStatus] = useState("");
-  const [accessCode, setAccessCode] = useState("");
-  const [scoresheets, setScoresheets] = useState("");
+export default function ChurchForm(props) {
+  const [name, setName] = useState("");
+  const [acronym, setAcronym] = useState("");
+  const [churchNumber, setChurchNumber] = useState("");
+  const [participants, setParticipants] = useState("");
   const [event_id, setEventId] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
@@ -28,52 +26,48 @@ export default function JudgeForm(props) {
 
   useEffect(() => {
     onLoad();
-  }, [state.judges]);
+  }, [state.churches]);
 
   async function onLoad() {
     if (!props.location.state && !props.match.params.id) {
       toast.warn("Please choose an event first before proceeding...");
-      props.history.push("/judges");
+      props.history.push("/churches");
       return;
     }
 
     try {
-      if (state.judges.length === 0) {
-        await loadJudgesAction(dispatch);
+      if (state.churches.length === 0) {
+        await loadChurchesAction(dispatch);
       }
     } catch (err) {
-      toast.error("Loading judges failed. " + err.message);
+      toast.error("Loading churches failed. " + err.message);
       throw err;
     }
 
     setIsApiInProgress(state.apiCallsInProgress > 0);
 
-    if (props.match.params.id && state.judges.length > 0) {
+    if (props.match.params.id && state.churches.length > 0) {
       setIsEdit(true);
-      const judge = getJudgeById(props.match.params.id);
+      const church = getChurchesById(props.match.params.id);
 
-      setFirstName(judge.firstName);
-      setMiddleInitial(judge.middleInitial);
-      setLastName(judge.lastName);
-      setStatus(judge.status);
-      setAccessCode(judge.accessCode);
-      setScoresheets(judge.scoresheets);
-      setEventId(judge.event_id);
+      setName(church.name);
+      setAcronym(church.acronym);
+      setChurchNumber(church.churchNumber);
+      setParticipants(church.participants);
+      setEventId(church.event_id);
     }
   }
 
-  function getJudgeById(id) {
-    return state.judges.find((judge) => judge._id === id);
+  function getChurchesById(id) {
+    return state.churches.find((church) => church._id === id);
   }
 
   function validateForm() {
-    return (
-      firstName.length > 0 && middleInitial.length > 0 && lastName.length > 0
-    );
+    return name.length > 0 && acronym.length > 0;
   }
 
   function handleCancel() {
-    props.history.push("/judges");
+    props.history.push("/churches");
   }
 
   function handleSubmit(e) {
@@ -85,25 +79,23 @@ export default function JudgeForm(props) {
             if (proceed) {
               setIsLoading(true);
 
-              const updatedJudge = {
+              const updatedChurch = {
                 event_id,
-                firstName,
-                middleInitial,
-                lastName,
-                status,
-                accessCode,
-                scoresheets,
+                name,
+                churchNumber,
+                participants,
+                acronym,
               };
 
-              editJudgeAction(dispatch, props.match.params.id, updatedJudge)
+              editChurchAction(dispatch, props.match.params.id, updatedChurch)
                 .then(() => {
-                  toast.success(`Judge was updated successfully!`);
-                  props.history.push("/judges");
+                  toast.success(`Church was updated successfully!`);
+                  props.history.push("/churches");
                 })
                 .catch((err) => {
                   setIsLoading(false);
                   console.error(err);
-                  toast.error("Error updating this judge. " + err.message);
+                  toast.error("Error updating this church. " + err.message);
                 });
             } else throw new Error("Error");
           })
@@ -119,23 +111,22 @@ export default function JudgeForm(props) {
             if (proceed) {
               setIsLoading(true);
 
-              const newJudge = {
+              const newChurch = {
                 event_id: props.location.state.eventID,
-                firstName,
-                middleInitial,
-                lastName,
-                status: "Incomplete",
-                scoresheets: [],
+                name,
+                churchNumber: 0,
+                participants: [],
+                acronym,
               };
 
-              addJudgeAction(dispatch, newJudge)
+              addChurchAction(dispatch, newChurch)
                 .then(() => {
-                  toast.success("New Judge was added successfully!");
-                  props.history.push("/judges");
+                  toast.success("New Church was added successfully!");
+                  props.history.push("/churches");
                 })
                 .catch((err) => {
                   setIsLoading(false);
-                  toast.error("Error adding this Judge. " + err.message);
+                  toast.error("Error adding this Church. " + err.message);
                 });
             } else throw new Error("Error");
           })
@@ -150,31 +141,24 @@ export default function JudgeForm(props) {
   return isApiInProgress ? (
     <Spinner />
   ) : (
-    <div className="judge-form container">
+    <div className="church-form container">
       <AlertDialog />
       <br />
-      {isEdit ? <h5>Edit Judge</h5> : <h5>Create Judge</h5>}
+      {isEdit ? <h5>Edit Church</h5> : <h5>Create Church</h5>}
       <form onSubmit={handleSubmit}>
         <TextInput
-          name="First Name"
-          label="First Name"
-          placeholder="Enter First Name"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          name="Name"
+          label="Name"
+          placeholder="Enter Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
         <TextInput
-          name="Middle Initial"
-          label="Middle Initial"
-          placeholder="Enter Middle Initial"
-          value={middleInitial}
-          onChange={(e) => setMiddleInitial(e.target.value)}
-        />
-        <TextInput
-          name="Last Name"
-          label="Last Name"
-          placeholder="Enter Last Name"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          name="Acronym"
+          label="Acronym"
+          placeholder="Enter Acronym"
+          value={acronym}
+          onChange={(e) => setAcronym(e.target.value)}
         />
         <FormGroup controlId="submit">
           <LoaderButton

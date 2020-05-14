@@ -29,10 +29,15 @@ export default function Login(props) {
     const browser = detect();
 
     // handle the case where we don't detect the browser
-    if (browser) {
-      setCurrBrowser(browser.name);
+    try {
+      if (browser) {
+        setCurrBrowser(browser.name);
+      }
+      setIPAddress(await publicIp.v4());
+    } catch (e) {
+      console.log(e);
     }
-    setIPAddress(await publicIp.v4());
+
     /*Being used for Testing*/
     /*--START--
     await dispatch({ type: "SAMPLE_ACTION", users });

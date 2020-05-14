@@ -1,14 +1,16 @@
 import React from "react";
-import { FormControl } from "react-bootstrap";
+import { FormGroup, FormControl } from "react-bootstrap";
 import PropTypes from "prop-types";
 
 export const SelectEvent = ({
   events,
   selectedEvent,
   onChangeSelectedEvent,
+  handleViewBtn,
 }) => {
   return (
-    <>
+    <FormGroup>
+      <br />
       <h5>Choose Event</h5>
       <FormControl
         autoFocus
@@ -24,7 +26,11 @@ export const SelectEvent = ({
           );
         })}
       </FormControl>
-    </>
+      <br />
+      <button className="btn btn-dark" onClick={handleViewBtn}>
+        View
+      </button>
+    </FormGroup>
   );
 };
 
@@ -32,6 +38,7 @@ SelectEvent.propTypes = {
   events: PropTypes.array.isRequired,
   selectedEvent: PropTypes.string.isRequired,
   onChangeSelectedEvent: PropTypes.func.isRequired,
+  handleViewBtn: PropTypes.func.isRequired,
 };
 
 export default SelectEvent;

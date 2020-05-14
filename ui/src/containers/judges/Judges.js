@@ -10,6 +10,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import SelectEvent from "../../components/SelectEvent";
+import AddButton from "../../components/AddButton";
 import { toast } from "react-toastify";
 import { store } from "../../context/Store";
 import { loadEventsAction } from "../../context/actions/EventActions";
@@ -69,7 +70,7 @@ export default function Judges(props) {
 
   useEffect(() => {
     onLoad();
-  }, [state.events, state.judges]);
+  }, [state.judges]);
 
   async function onLoad() {
     let defaultID = "";
@@ -133,20 +134,12 @@ export default function Judges(props) {
 
   function displayAddButton() {
     return (
-      <div>
-        <Button
-          variant="light"
-          size="lg"
-          onClick={() =>
-            props.history.push({
-              pathname: "/judges/add",
-              state: { eventID: selectedEvent },
-            })
-          }
-        >
-          <FontAwesomeIcon icon={faPlus} /> Judge
-        </Button>
-      </div>
+      <AddButton
+        label={"Judge"}
+        pathname={"/judges/add"}
+        state={{ eventID: selectedEvent }}
+        history={props.history}
+      />
     );
   }
 
@@ -216,18 +209,12 @@ export default function Judges(props) {
           {events.length > 0 ? (
             <div className="lander">
               <div>
-                <FormGroup>
-                  <br />
-                  <SelectEvent
-                    events={events}
-                    selectedEvent={selectedEvent}
-                    onChangeSelectedEvent={onChangeSelectedEvent}
-                  />
-                  <br />
-                  <button className="btn btn-dark" onClick={handleViewBtn}>
-                    View
-                  </button>
-                </FormGroup>
+                <SelectEvent
+                  events={events}
+                  selectedEvent={selectedEvent}
+                  onChangeSelectedEvent={onChangeSelectedEvent}
+                  handleViewBtn={handleViewBtn}
+                />
               </div>
               {display ? (
                 displayJudges()

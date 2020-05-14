@@ -12,6 +12,9 @@ import CreateCompetition from "./containers/competitions/CreateCompetition";
 import Criterias from "./containers/criterias/Criterias";
 import CreateCriteria from "./containers/criterias/CreateCriteria";
 import EditCriteria from "./containers/criterias/EditCriteria";
+import Churches from "./containers/churches/Churches";
+import ChurchForm from "./containers/churches/ChurchForm";
+import Participants from "./containers/participants/Participants";
 import Judges from "./containers/judges/Judges";
 import JudgeForm from "./containers/judges/JudgeForm";
 import Scoresheets from "./containers/scoresheets/Scoresheets";
@@ -75,6 +78,30 @@ export default function Routes({ appProps }) {
         path="/criterias/:id"
         exact
         component={withAuth(EditCriteria)}
+        appProps={appProps}
+      />
+      <AppliedRoute
+        path="/churches"
+        exact
+        component={withAuth(Churches)}
+        appProps={appProps}
+      />
+      <AppliedRoute
+        path="/churches/add"
+        exact
+        component={withAuth(ChurchForm)}
+        appProps={appProps}
+      />
+      <AppliedRoute
+        path="/participants"
+        exact
+        component={withAuth(Participants)}
+        appProps={appProps}
+      />
+      <AppliedRoute
+        path="/churches/:id"
+        exact
+        component={withAuth(ChurchForm)}
         appProps={appProps}
       />
       <AppliedRoute

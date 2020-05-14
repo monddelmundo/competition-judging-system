@@ -1,0 +1,57 @@
+.tab-nav-link.active {
+  color: white !important;
+  background-color: turquoise !important;
+  font-weight: 600;
+  text-align: center;
+}
+
+.tab-nav-link {
+  color: black !important;
+  background-color: #f4f4f4 !important;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.table-horiz-scroll {
+  overflow-x: auto;
+  height: 550px;
+  margin-bottom: 30px;
+  overflow: auto;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  background: white;
+}
+
+.table-horiz-scroll > table {
+  height: 100%;
+}
+
+.legend-table {
+  border-collapse: collapse;
+}
+
+.legend-table {
+  border: 1px solid black;
+}
+
+.legend-th {
+  border: 1px solid black;
+  font-size: 14px;
+}
+
+.legend-td {
+  border: 1px solid black;
+  font-size: 14px;
+}
+
+.btnExport {
+  margin-bottom: 15px;
+}
+
+.bold {
+  font-weight: 700;
+}
