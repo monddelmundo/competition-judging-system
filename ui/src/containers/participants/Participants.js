@@ -72,7 +72,7 @@ export default function Participants(props) {
 
   useEffect(() => {
     onLoad();
-  }, [state.competitions, state.churches]);
+  }, [state.competitions]);
 
   async function onLoad() {
     if (!props.location.state && !props.match.params.id) {
@@ -89,7 +89,8 @@ export default function Participants(props) {
       }
 
       if (state.churches.length === 0) {
-        await loadChurchesAction(dispatch);
+        props.history.push("/churches");
+        //await loadChurchesAction(dispatch);
       }
     } catch (err) {
       toast.error("Loading failed. " + err.message);
@@ -158,29 +159,51 @@ export default function Participants(props) {
               <div>
                 {church.participants.length > 0 &&
                 filteredParticipants.length > 0 ? (
-                  <table className="table">
-                    <thead className="thead-light">
-                      <tr>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Date Saved</th>
-                        <th>Date Baptized</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredParticipants.map((participant) => (
-                        <Participant
-                          participant={participant}
-                          deleteParticipant={deleteParticipant}
-                          key={participant._id}
-                          church={church}
-                        />
-                      ))}
-                    </tbody>
-                  </table>
+                  <>
+                    <table className="table">
+                      <thead className="thead-light">
+                        <tr>
+                          <th>Name</th>
+                          <th>Age</th>
+                          <th>Date Saved</th>
+                          <th>Date Baptized</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredParticipants.map((participant) => (
+                          <Participant
+                            participant={participant}
+                            deleteParticipant={deleteParticipant}
+                            key={participant._id}
+                            church={church}
+                          />
+                        ))}
+                      </tbody>
+                    </table>
+                    <AddButton
+                      label={"Participant"}
+                      pathname={"/participants/add"}
+                      state={{
+                        church: church,
+                        competition_id: competition._id,
+                      }}
+                      history={props.history}
+                    />
+                  </>
                 ) : (
-                  <h5>There is no participant for this competition.</h5>
+                  <>
+                    <h5>There is no participant for this competition.</h5>
+                    <AddButton
+                      label={"Participant"}
+                      pathname={"/participants/add"}
+                      state={{
+                        church: church,
+                        competition_id: competition._id,
+                      }}
+                      history={props.history}
+                    />
+                  </>
                 )}
               </div>
             </Tab.Pane>
@@ -228,12 +251,6 @@ export default function Participants(props) {
             <Row>
               <Col md={{ span: 10, order: 2 }}>
                 <Tab.Content>{participantsList()}</Tab.Content>
-                <AddButton
-                  label={"Participant"}
-                  pathname={"/participants/add"}
-                  state={{ church: church }}
-                  history={props.history}
-                />
               </Col>
               <Col md={{ span: 2, order: 1 }}>
                 <Nav variant="pills" className="flex-column">

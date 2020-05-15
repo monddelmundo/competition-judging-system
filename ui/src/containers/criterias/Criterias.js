@@ -44,14 +44,24 @@ export default function Criterias(props) {
     onLoad();
   }, []);
 
-  function onLoad() {
+  async function onLoad() {
     if (!props.location.state && !props.match.params.id) {
       toast.warn("Please choose a competition first before proceeding...");
       props.history.push("/competitions");
       return;
     }
 
-    setCompetition(props.location.state.competition);
+    await setCompetition(props.location.state.competition);
+
+    try {
+      if (state.competitions.length === 0) {
+        //await loadCompetitionsAction(dispatch);
+        props.history.push("/competitions");
+      }
+    } catch (err) {
+      toast.error("Loading failed. " + err.message);
+      throw err;
+    }
   }
 
   function deleteCriteria(id) {

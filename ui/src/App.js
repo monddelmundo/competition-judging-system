@@ -62,7 +62,7 @@ function App(props) {
               </NavLink>
             </Nav>
             <Nav className="ml-auto">
-              <NavLink className="Nav_Link" to="" onClick={handleLogout}>
+              <NavLink className="Nav_Link Log" to="" onClick={handleLogout}>
                 Logout
               </NavLink>
             </Nav>
@@ -70,7 +70,7 @@ function App(props) {
         ) : (
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
-              <NavLink className="Nav_Link" to="/login">
+              <NavLink className="Nav_Link Log" to="/login">
                 Login
               </NavLink>
             </Nav>

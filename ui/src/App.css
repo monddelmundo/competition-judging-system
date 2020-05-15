@@ -18,5 +18,13 @@
 }
 
 .App .Nav_Link:hover {
-  color: gainsboro;
+  color: rgb(199, 199, 199);
+}
+
+.App .Nav_Link.active {
+  color: rgb(199, 199, 199);
+}
+
+.App .Nav_Link.Log.active {
+  color: #fff;
 }
