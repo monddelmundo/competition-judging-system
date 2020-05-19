@@ -13,6 +13,32 @@ export default function churchReducer(state = initialState.churches, action) {
       );
     case types.DELETE_CHURCH_SUCCESS:
       return state.filter((church) => church._id !== action.id);
+    case types.ADD_PARTICIPANT_SUCCESS:
+      return state.map((church) => {
+        if (church._id === action.churchID) {
+          let updated = { ...church };
+          updated.participants = updated.participants.concat(
+            action.participant
+          );
+          return updated;
+        } else {
+          return church;
+        }
+      });
+    case types.EDIT_PARTICIPANT_SUCCESS:
+      return state.map((church) => {
+        if (church._id === action.churchID) {
+          let updated = { ...church };
+          updated.participants = updated.participants.map((participant) =>
+            participant._id === action.participantID
+              ? action.participant
+              : participant
+          );
+          return updated;
+        } else {
+          return church;
+        }
+      });
     case types.DELETE_PARTICIPANT_SUCCESS:
       return state.map((church) => {
         if (church._id === action.churchID) {

@@ -28,8 +28,16 @@ const Participant = (props) => {
     <tr>
       <td>{name}</td>
       <td>{props.participant.age}</td>
-      <td>{props.participant.dateSaved}</td>
-      <td>{props.participant.dateBaptized}</td>
+      <td>
+        {props.participant.dateSaved === "N/A"
+          ? "N/A"
+          : props.participant.dateSaved.substring(0, 10)}
+      </td>
+      <td>
+        {props.participant.dateBaptized === "N/A"
+          ? "N/A"
+          : props.participant.dateBaptized.substring(0, 10)}
+      </td>
       <td>
         <Link
           to={{
@@ -187,6 +195,7 @@ export default function Participants(props) {
                       state={{
                         church: church,
                         competition_id: competition._id,
+                        maxNoOfPerson: competition.maxNoOfPerson,
                       }}
                       history={props.history}
                     />
@@ -200,6 +209,7 @@ export default function Participants(props) {
                       state={{
                         church: church,
                         competition_id: competition._id,
+                        maxNoOfPerson: competition.maxNoOfPerson,
                       }}
                       history={props.history}
                     />
