@@ -3,10 +3,10 @@ import { FormGroup, FormLabel, Button } from "react-bootstrap";
 import LoaderButton from "../../components/LoaderButton";
 import AlertDialog, { showDialog } from "../../components/dialogs/Dialog";
 import {
-  addJudgeAction,
-  editJudgeAction,
-  loadJudgesAction,
-} from "../../context/actions/JudgeActions";
+  addParticipantAction,
+  editParticipantAction,
+} from "../../context/actions/ChurchActions";
+import { loadCompetitionsAction } from "../../context/actions/CompetitionActions";
 import DatePicker from "react-datepicker";
 import { store } from "../../context/Store";
 import { toast } from "react-toastify";
@@ -46,27 +46,28 @@ export default function ParticipantForm(props) {
 
     setIsApiInProgress(state.apiCallsInProgress > 0);
 
-    if (props.match.params.id && props.location.state.church) {
-      setIsEdit(true);
-      const participant = getParticipantById(
-        props.match.params.id,
-        props.location.state.church
-      );
+    try {
+      if (props.match.params.id && props.location.state.church) {
+        setIsEdit(true);
+        const participant = getParticipantById(
+          props.match.params.id,
+          props.location.state.church
+        );
 
-      setFirstName(participant.firstName);
-      setMiddleInitial(participant.middleInitial);
-      setLastName(participant.lastName);
-      setAge(participant.age);
-      participant.dateSaved.toString() === "N/A"
-        ? setEnableDateSaved(false)
-        : setDateSaved(participant.dateSaved);
-      participant.dateSaved.toString() === "N/A"
-        ? setEnableDateBaptized(false)
-        : setDateBaptized(participant.dateBaptized);
-      setCompetitionID(participant.competition_id);
-    } else {
-      console.log("Competition:", props.location.state.competition_id);
-      console.log("Church:", props.location.state.church._id);
+        setFirstName(participant.firstName);
+        setMiddleInitial(participant.middleInitial);
+        setLastName(participant.lastName);
+        setAge(participant.age);
+        participant.dateSaved.toString() === "N/A"
+          ? setEnableDateSaved(false)
+          : setDateSaved(new Date(participant.dateSaved));
+        participant.dateBaptized.toString() === "N/A"
+          ? setEnableDateBaptized(false)
+          : setDateBaptized(new Date(participant.dateBaptized));
+        setCompetitionID(participant.competition_id);
+      }
+    } catch (err) {
+      throw err;
     }
   }
 
@@ -102,7 +103,91 @@ export default function ParticipantForm(props) {
     setEnableDateBaptized(!enableDateBaptized);
   }
 
-  function handleSubmit(e) {}
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (isEdit) {
+      showDialog(true, "update", (res) => {
+        res.then((proceed) => {
+          if (proceed) {
+            setIsLoading(true);
+
+            const updatedParticipant = {
+              competition_id,
+              firstName,
+              middleInitial,
+              lastName,
+              age,
+              dateSaved: enableDateSaved ? dateSaved.toISOString() : "N/A",
+              dateBaptized: enableDateBaptized
+                ? dateBaptized.toISOString()
+                : "N/A",
+            };
+
+            editParticipantAction(
+              dispatch,
+              props.location.state.church._id,
+              props.match.params.id,
+              updatedParticipant
+            )
+              .then((res) => {
+                toast.success(`Participant was updated successfully!`);
+                props.history.push({
+                  pathname: "/participants",
+                  state: {
+                    church: res.data,
+                  },
+                });
+              })
+              .catch((err) => {
+                setIsLoading(false);
+                console.error(err);
+                toast.error("Error updating this participant. " + err.message);
+              });
+          }
+        });
+      });
+    } else {
+      showDialog(true, "add", (res) => {
+        res.then((proceed) => {
+          if (proceed) {
+            setIsLoading(true);
+
+            const newParticipant = {
+              competition_id: props.location.state.competition_id,
+              firstName,
+              middleInitial,
+              lastName,
+              age,
+              dateSaved: enableDateSaved ? dateSaved.toISOString() : "N/A",
+              dateBaptized: enableDateBaptized
+                ? dateBaptized.toISOString()
+                : "N/A",
+              maxNoOfPerson: props.location.state.maxNoOfPerson,
+            };
+
+            addParticipantAction(
+              dispatch,
+              props.location.state.church._id,
+              newParticipant
+            )
+              .then((res) => {
+                toast.success("New Participant was added successfully!");
+                props.history.push({
+                  pathname: "/participants",
+                  state: {
+                    church: res.data,
+                  },
+                });
+              })
+              .catch((err) => {
+                setIsLoading(false);
+                toast.error("Error adding this Church. " + err.message);
+              });
+          } else throw new Error("Error");
+        });
+      });
+    }
+  }
 
   return isApiInProgress ? (
     <Spinner />
@@ -145,8 +230,10 @@ export default function ParticipantForm(props) {
           <br />
           <DatePicker
             selected={dateSaved}
+            dateFormat="yyyy/MM/dd"
             onChange={(newDate) => setDateSaved(newDate)}
             disabled={!enableDateSaved}
+            maxDate={new Date() - 1}
           />
           &nbsp;&nbsp;
           <Checkbox
@@ -156,13 +243,15 @@ export default function ParticipantForm(props) {
             onChange={toggleSavedChange}
           />
         </FormGroup>
-        <FormGroup controlId="dateSaved">
+        <FormGroup controlId="dateBaptized">
           <FormLabel>Date Baptized</FormLabel>
           <br />
           <DatePicker
             selected={dateBaptized}
+            dateFormat="yyyy/MM/dd"
             onChange={(newDate) => setDateBaptized(newDate)}
             disabled={!enableDateBaptized}
+            maxDate={new Date() - 1}
           />
           &nbsp;&nbsp;
           <Checkbox

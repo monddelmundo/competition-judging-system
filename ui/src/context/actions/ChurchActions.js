@@ -77,9 +77,15 @@ export function deleteParticipantAction(dispatch, churchID, participantID) {
     });
 }
 
-export function addParticipantAction(dispatch, churchID, newParticipant) {
+export function addParticipantAction(
+  dispatch,
+  churchID,
+  newParticipant,
+  maxNoOfPerson
+) {
+  console.log("Participant Action:", newParticipant, maxNoOfPerson);
   dispatch({ type: types.BEGIN_API_CALL });
-  return createParticipantApi(churchID, newParticipant)
+  return createParticipantApi(churchID, newParticipant, maxNoOfPerson)
     .then((res) => {
       dispatch({
         type: types.ADD_PARTICIPANT_SUCCESS,

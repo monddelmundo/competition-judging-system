@@ -58,36 +58,38 @@ router.route("/:id/add").post((req, res) => {
   const dateBaptized = req.body.dateBaptized;
   const maxNoOfPerson = req.body.maxNoOfPerson;
 
-  Church.findById(req.params.id).then((church) => {
-    const newParticipant = {
-      competition_id,
-      firstName,
-      middleInitial,
-      lastName,
-      age,
-      dateSaved,
-      dateBaptized,
-    };
+  const newParticipant = {
+    competition_id,
+    firstName,
+    middleInitial,
+    lastName,
+    age,
+    dateSaved,
+    dateBaptized,
+  };
 
-    const filteredParticipants = church.participants.filter(
-      (participant) => participant.competition_id == competition_id
-    );
+  Church.findById(req.params.id)
+    .then((church) => {
+      const filteredParticipants = church.participants.filter(
+        (participant) => participant.competition_id == competition_id
+      );
 
-    if (filteredParticipants.length < maxNoOfPerson) {
-      church.participants.push(newParticipant);
+      if (filteredParticipants.length < maxNoOfPerson) {
+        church.participants.push(newParticipant);
 
-      church
-        .save()
-        .then(() => res.json(church))
-        .catch((err) => res.status(400).json("Error: " + err));
-    } else {
-      res
-        .status(400)
-        .json(
-          "Error: You cannot add any more participants to this competition!"
-        );
-    }
-  });
+        church
+          .save()
+          .then(() => res.json(church))
+          .catch((err) => res.status(400).json("Error: " + err));
+      } else {
+        res
+          .status(400)
+          .json(
+            "Error: You cannot add any more participants to this competition!"
+          );
+      }
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
 });
 
 router.route("/:id/delete/:participant_id").delete((req, res) => {

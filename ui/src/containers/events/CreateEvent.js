@@ -137,6 +137,8 @@ export default function CreateEvent(props) {
               <DatePicker
                 selected={dateOfEvent}
                 onChange={(newDate) => setDateOfEvent(newDate)}
+                minDate={new Date()}
+                showDisabledMonthNavigation
               />
             </FormGroup>
             <FormGroup controlId="location">
