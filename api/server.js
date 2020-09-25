@@ -14,10 +14,17 @@ const secret = process.env.SECRET;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser(secret));
+// app.use(
+//   cors({
+//     credentials: true,
+//     origin: "http://localhost:3000",
+//   })
+// );
+
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:3000",
+    origin: "https://devcoral.com",
   })
 );
 app.use(express.json());
