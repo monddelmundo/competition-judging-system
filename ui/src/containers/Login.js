@@ -48,7 +48,7 @@ export default function Login(props) {
     return fields.username.length > 0 && fields.password.length > 0;
   }
 
-  async function handleSubmit(event) {
+  function handleSubmit(event) {
     event.preventDefault();
 
     setIsLoading(true); //to tell users that the page is loading.

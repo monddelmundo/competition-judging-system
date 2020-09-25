@@ -42,7 +42,13 @@ router.route("/authenticate").post((req, res) => {
             expiresIn: "5h",
             algorithm: "RS256",
           });
-          res.cookie("token", token, { httpOnly: true }).send(token);
+          res
+            .cookie("token", token, {
+              httpOnly: false,
+              sameSite: "none",
+              secure: true,
+            })
+            .send(token);
         }
       });
     }

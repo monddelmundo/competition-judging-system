@@ -11,7 +11,6 @@ export default function withAuth(ComponentToProtect) {
       this.state = {
         browser: "",
         ipAddress: "",
-        isMounted: false,
         loading: true,
         redirect: false,
         status: 0,
@@ -19,7 +18,7 @@ export default function withAuth(ComponentToProtect) {
     }
 
     componentDidMount() {
-      if (!Auth.isUserAuthenticated())
+      if (!Auth.isJudgeAuthenticated())
         this.setState({ loading: false, redirect: true, status: 401 });
 
       axios.defaults.withCredentials = true;
@@ -27,7 +26,6 @@ export default function withAuth(ComponentToProtect) {
       //  .get("http://localhost:5000/api/checkToken", {
       //    method: "GET",
       //  })
-      this.setState({ isMounted: true });
       checkTokenApi()
         .then((res) => {
           if (res.status === 200) {
@@ -40,13 +38,13 @@ export default function withAuth(ComponentToProtect) {
             }
             //this async method will check if the token has the same ip address
             //and browser with the current ip address and browser that is being
-            //used by the user
+            //used by the judge
             /*Uncomment this before deploying to Production
             (async() => {
               const publicIp = require('public-ip');
               this.state.ipAddress = await publicIp.v4();
               
-              if ((this.props.decodedUser.ipAddress === this.state.ipAddress) && (this.props.decodedUser.browser === this.state.browser)) {
+              if ((this.props.decodedJudge.ipAddress === this.state.ipAddress) && (this.props.decodedJudge.browser === this.state.browser)) {
                 this.setState({ loading: false, status: 200 });
               } else {
                 console.log(this.state);
@@ -71,13 +69,13 @@ export default function withAuth(ComponentToProtect) {
     }
 
     render() {
-      const { loading, redirect, status, isMounted } = this.state;
+      const { loading, redirect, status } = this.state;
       if (loading) {
         return null;
       }
-      if (redirect && isMounted) {
+      if (redirect) {
         Auth.deauthenticateUser();
-        this.props.userHasAuthenticated(false);
+        //this.props.judgeHasAuthenticated(false);
         return <Redirect to="/login" />;
       }
       //console.log(this.props.decodedUser);
