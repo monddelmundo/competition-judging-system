@@ -12,6 +12,8 @@ function App(props) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [decodedUser, setDecodedUser] = useState({});
+  const [decodedJudge, setDecodedJudge] = useState({});
+  const [isAuthenticatedJudge, judgeHasAuthenticated] = useState(false);
 
   useEffect(() => {
     onLoad();
@@ -21,6 +23,9 @@ function App(props) {
     try {
       if (await Auth.isUserAuthenticated()) {
         userHasAuthenticated(true);
+      }
+      if (await Auth.isJudgeAuthenticated()) {
+        judgeHasAuthenticated(true);
       }
     } catch (e) {
       if (e !== "No current user") {
@@ -33,6 +38,7 @@ function App(props) {
   async function handleLogout() {
     await Auth.deauthenticateUser();
     userHasAuthenticated(false);
+    judgeHasAuthenticated(false);
     props.history.push("/login"); //will redirect the user to login page after logging out
   }
 
@@ -67,6 +73,19 @@ function App(props) {
               </NavLink>
             </Nav>
           </Navbar.Collapse>
+        ) : isAuthenticatedJudge ? (
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="mr-auto">
+              <NavLink className="Nav_Link" to="/scoresheet">
+                Scoresheet
+              </NavLink>
+            </Nav>
+            <Nav className="ml-auto">
+              <NavLink className="Nav_Link Log" to="" onClick={handleLogout}>
+                Logout
+              </NavLink>
+            </Nav>
+          </Navbar.Collapse>
         ) : (
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
@@ -82,8 +101,12 @@ function App(props) {
         appProps={{
           isAuthenticated,
           userHasAuthenticated,
+          isAuthenticatedJudge,
+          judgeHasAuthenticated,
           decodedUser,
           setDecodedUser,
+          decodedJudge,
+          setDecodedJudge,
         }}
       />
     </div>

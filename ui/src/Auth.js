@@ -8,25 +8,25 @@ class Auth {
   }
 
   static deauthenticateUser() {
-    //localStorage.removeItem("user");
-    //localStorage.removeItem("context");
     localStorage.clear();
   }
 
   static getToken() {
     return localStorage.getItem("user");
   }
-  /*
-    static authHeader() {
-        let user = JSON.parse(localStorage.getItem('user'));
 
-        if (user && user.token) {
-            return { 'Authorization': 'Bearer ' + user.token }
-        } else {
-            return {};
-        }
-    }
-    */
+  //judge
+  static authenticateJudge(token) {
+    localStorage.setItem("judge", token);
+  }
+
+  static isJudgeAuthenticated() {
+    return localStorage.getItem("judge") !== null;
+  }
+
+  static getTokenJudge() {
+    return localStorage.getItem("judge");
+  }
 }
 
 export default Auth;

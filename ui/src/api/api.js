@@ -20,3 +20,12 @@ export function checkTokenApi() {
     .then(handleResponse)
     .catch(handleError);
 }
+
+export function authenticateJudgeApi(newInfo) {
+  return axios
+    .post(baseUrl + "authenticateJudge", newInfo, {
+      timeout: 5000,
+    })
+    .then(handleResponse)
+    .catch(handleError);
+}

@@ -1,3 +1,4 @@
 /graveyard
 /node_modules
 .git
+.vercel

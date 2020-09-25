@@ -3,6 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import AppliedRoute from "./components/AppliedRoute";
 import Home from "./containers/Home";
 import Login from "./containers/Login";
+import Scoresheet from "./containers/judges/Scoresheet";
 import Events from "./containers/events/Events";
 import EditEvent from "./containers/events/EditEvent";
 import CreateEvent from "./containers/events/CreateEvent";
@@ -21,12 +22,19 @@ import JudgeForm from "./containers/judges/JudgeForm";
 import Scoresheets from "./containers/scoresheets/Scoresheets";
 import NotFound from "./containers/NotFound";
 import withAuth from "./withAuth";
+import withAuthJudge from "./withAuthJudge";
 
 export default function Routes({ appProps }) {
   return (
     <Switch>
       <AppliedRoute path="/" exact component={Home} appProps={appProps} />
       <AppliedRoute path="/login" exact component={Login} appProps={appProps} />
+      <AppliedRoute
+        path="/scoresheet"
+        exact
+        component={withAuthJudge(Scoresheet)}
+        appProps={appProps}
+      />
       <AppliedRoute
         path="/events"
         exact

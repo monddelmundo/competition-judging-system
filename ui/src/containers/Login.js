@@ -4,7 +4,7 @@ import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import Auth from "../Auth";
 import { notify } from "../components/notifications/Notification";
-import { authenticateApi } from "../api/Api";
+import { authenticateApi, authenticateJudgeApi } from "../api/Api";
 
 export default function Login(props) {
   const [isLoading, setIsLoading] = useState(false);
@@ -64,12 +64,14 @@ export default function Login(props) {
     //  .post("http://localhost:5000/api/authenticate", newInfo, {
     //    timeout: 5000,
     //  })
+    const jwt = require("jsonwebtoken");
+
     authenticateApi(newInfo)
       .then((res) => {
         if (res.status === 200) {
           Auth.authenticateUser(res.data);
           const token = Auth.getToken();
-          const jwt = require("jsonwebtoken");
+          //const jwt = require("jsonwebtoken");
           const decoded = jwt.decode(token);
 
           //localStorage.setItem('cool-jwt', res.data);
@@ -84,9 +86,31 @@ export default function Login(props) {
         }
       })
       .catch((err) => {
-        setIsLoading(false);
-        console.error(err);
-        notify("Incorrect username/password!", "error");
+        authenticateJudgeApi(newInfo)
+          .then((res) => {
+            if (res.status === 200) {
+              Auth.authenticateJudge(res.data);
+              const token = Auth.getTokenJudge();
+              const decoded = jwt.decode(token);
+              props.setDecodedJudge(decoded);
+              props.judgeHasAuthenticated(true);
+              props.history.push({ pathname: "/scoresheet", state: decoded });
+
+              notify(`Hi  ${decoded.firstName}!`, "success");
+            } else {
+              setIsLoading(false);
+              console.error(err);
+              notify("Incorrect username/password!", "error");
+            }
+          })
+          .catch((err) => {
+            setIsLoading(false);
+            console.error(err);
+            notify("Incorrect username/password!", "error");
+          });
+        // setIsLoading(false);
+        // console.error(err);
+        // notify("Incorrect username/password!", "error");
       });
   }
 
