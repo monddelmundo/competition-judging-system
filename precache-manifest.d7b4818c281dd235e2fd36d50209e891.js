@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "7031724978b7f445358c93613b5e95e0",
+    "revision": "3d82b1ed33d0e020bf9f6080b7693fe3",
     "url": "/competition-judging-system/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/competition-judging-system/static/css/2.4424f763.chunk.css"
   },
   {
-    "revision": "2f341d0f6024f8b81fd7",
+    "revision": "ec7e8938fdb918dd391c",
     "url": "/competition-judging-system/static/css/main.f3c557cd.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/competition-judging-system/static/js/2.2cc3fdf9.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "2f341d0f6024f8b81fd7",
-    "url": "/competition-judging-system/static/js/main.3015d2b8.chunk.js"
+    "revision": "ec7e8938fdb918dd391c",
+    "url": "/competition-judging-system/static/js/main.db5b223f.chunk.js"
   },
   {
     "revision": "2bb9a78bf94f58ef12c9",

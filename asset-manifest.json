@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/competition-judging-system/static/css/main.f3c557cd.chunk.css",
-    "main.js": "/competition-judging-system/static/js/main.3015d2b8.chunk.js",
-    "main.js.map": "/competition-judging-system/static/js/main.3015d2b8.chunk.js.map",
+    "main.js": "/competition-judging-system/static/js/main.db5b223f.chunk.js",
+    "main.js.map": "/competition-judging-system/static/js/main.db5b223f.chunk.js.map",
     "runtime-main.js": "/competition-judging-system/static/js/runtime-main.944ec241.js",
     "runtime-main.js.map": "/competition-judging-system/static/js/runtime-main.944ec241.js.map",
     "static/css/2.4424f763.chunk.css": "/competition-judging-system/static/css/2.4424f763.chunk.css",
     "static/js/2.2cc3fdf9.chunk.js": "/competition-judging-system/static/js/2.2cc3fdf9.chunk.js",
     "static/js/2.2cc3fdf9.chunk.js.map": "/competition-judging-system/static/js/2.2cc3fdf9.chunk.js.map",
     "index.html": "/competition-judging-system/index.html",
-    "precache-manifest.53a2a6f79c3dcee242b077545b161c6e.js": "/competition-judging-system/precache-manifest.53a2a6f79c3dcee242b077545b161c6e.js",
+    "precache-manifest.d7b4818c281dd235e2fd36d50209e891.js": "/competition-judging-system/precache-manifest.d7b4818c281dd235e2fd36d50209e891.js",
     "service-worker.js": "/competition-judging-system/service-worker.js",
     "static/css/2.4424f763.chunk.css.map": "/competition-judging-system/static/css/2.4424f763.chunk.css.map",
     "static/css/main.f3c557cd.chunk.css.map": "/competition-judging-system/static/css/main.f3c557cd.chunk.css.map",
@@ -20,6 +20,6 @@
     "static/css/2.4424f763.chunk.css",
     "static/js/2.2cc3fdf9.chunk.js",
     "static/css/main.f3c557cd.chunk.css",
-    "static/js/main.3015d2b8.chunk.js"
+    "static/js/main.db5b223f.chunk.js"
   ]
 }
