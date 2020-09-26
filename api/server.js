@@ -21,12 +21,31 @@ app.use(cookieParser(secret));
 //   })
 // );
 
+const allowedDomains = [
+  "http://devcoral.com",
+  "https://devcoral.com",
+  "http://cjs.devcoral.com",
+  "https://cjs.devcoral.com",
+  "http://cjs-stg.devcoral.com",
+  "https://cjs-stg.devcoral.com",
+  "http://localhost:3000",
+];
 app.use(
   cors({
     credentials: true,
-    origin: "https://devcoral.com",
+    origin: function (origin, callback) {
+      // bypass the requests with no origin (like curl requests, mobile apps, etc )
+      if (!origin) return callback(null, true);
+
+      if (allowedDomains.indexOf(origin) === -1) {
+        const msg = `This site ${origin} does not have an access. Only specific domains are allowed to access it.`;
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
   })
 );
+
 app.use(express.json());
 
 const uri = process.env.ATLAS_URI;
