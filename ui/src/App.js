@@ -47,7 +47,7 @@ function App(props) {
       <Notification />
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
         <NavLink className="navbar-brand" to="/">
-          Adjudicator
+          Adjudicator - STG
         </NavLink>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
