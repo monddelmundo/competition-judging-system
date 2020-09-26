@@ -41,8 +41,7 @@ function App(props) {
     judgeHasAuthenticated(false);
     props.history.push("/login"); //will redirect the user to login page after logging out
   }
-
-  //test
+  //testing
 
   return (
     <div className="App container">
