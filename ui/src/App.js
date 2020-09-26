@@ -28,7 +28,7 @@ function App(props) {
         judgeHasAuthenticated(true);
       }
     } catch (e) {
-      if (e !== "No user") {
+      if (e !== "No current user") {
         alert(e);
       }
     }
