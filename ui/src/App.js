@@ -42,6 +42,8 @@ function App(props) {
     props.history.push("/login"); //will redirect the user to login page after logging out
   }
 
+  //test
+
   return (
     <div className="App container">
       <Notifications />
