@@ -42,8 +42,8 @@ function App(props) {
     props.history.push("/login"); //will redirect the user to login page after logging out
   }
 
-  return (
-    <div className="App container">
+    <div className="App contain  //testing
+er">
       <Notifications />
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
         <NavLink className="navbar-brand" to="/">
