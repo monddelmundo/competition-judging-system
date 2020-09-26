@@ -4,9 +4,9 @@ import "./App.css";
 import "./DefaultStyles.css";
 import Routes from "./Routes";
 import Auth from "./Auth";
+import Notification from "./components/notifications/Notification";
 import { Nav, Navbar } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Notifications from "./components/notifications/Notification";
 
 function App(props) {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
@@ -44,7 +44,7 @@ function App(props) {
 
   return (
     <div className="App container">
-      <Notifications />
+      <Notification />
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
         <NavLink className="navbar-brand" to="/">
           Adjudicator

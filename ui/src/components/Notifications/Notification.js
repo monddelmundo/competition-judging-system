@@ -24,7 +24,7 @@ export const notify = (msg, isSuccess) => {
   emitter.emit("notification", msg, isSuccess);
 };
 
-export default class Notifications extends React.Component {
+export default class Notification extends React.Component {
   constructor(props) {
     super(props);
 
