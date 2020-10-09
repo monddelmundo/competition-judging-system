@@ -83,7 +83,6 @@ export function addParticipantAction(
   newParticipant,
   maxNoOfPerson
 ) {
-  console.log("Participant Action:", newParticipant, maxNoOfPerson);
   dispatch({ type: types.BEGIN_API_CALL });
   return createParticipantApi(churchID, newParticipant, maxNoOfPerson)
     .then((res) => {

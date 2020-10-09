@@ -97,7 +97,6 @@ export default function Churches(props) {
 
         toDisplay(true);
       }
-      console.log(state);
     }
 
     setIsApiInProgress(state.apiCallsInProgress > 0);
